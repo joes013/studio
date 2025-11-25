@@ -14,10 +14,10 @@ export interface BlogPost {
 const blogPostsData: Omit<BlogPost, 'image'>[] = [
   {
     slug: 'transport-productes-quimics-carretera',
-    title: 'Transport de Productes Químics: Seguretat i Eficiència',
+    title: 'Transport de Químics: La Responsabilitat de Moure el Risc amb Seguretat Màxima',
     date: '2024-07-29',
     author: 'Equip d\'EJA Globaltrans',
-    excerpt: 'El transport de productes químics per carretera no és una tasca que es pugui prendre a la lleugera. Exigeix seguretat, rapidesa i el compliment d\'una normativa estricta.',
+    excerpt: 'Cada viatge de productes químics és una operació d\'alta responsabilitat. Descobreix com garantim la seguretat i l\'eficiència en cada pas.',
     content: `
       <p class="lead">El transport de productes químics per carretera no es una tasca que pugui dur a terme qualsevol i de qualsevol manera. Amb clients importants dins el sector, cada viatge porta amb ell una alta responsabilitat la qual exigeix seguretat, rapidesa i el compliment d’un seguit de normes. A EJA Globaltrans, com a empresa especialitzada en el sector de l’ADR, hem desenvolupat un seguit de protocols i processos que asseguren que en cada enviament es compleixi amb tots els estàndards necessaris.</p>
       
