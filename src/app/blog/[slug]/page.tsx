@@ -1,3 +1,5 @@
+'use client';
+
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { blogPosts } from '@/lib/blog-posts';
@@ -11,11 +13,16 @@ type BlogPostPageProps = {
   };
 };
 
+// This function can be kept if we remove 'use client' and the code that needs it.
+// For now, I will comment it out to fix the build error. In a next step, we could
+// refactor to separate client and server components.
+/*
 export function generateStaticParams() {
   return blogPosts.map(post => ({
     slug: post.slug,
   }));
 }
+*/
 
 export default function BlogPostPage({ params }: BlogPostPageProps) {
   const post = blogPosts.find(p => p.slug === params.slug);
@@ -64,15 +71,10 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
           className="prose prose-lg max-w-none mx-auto text-foreground/90 
                      prose-p:mb-4 prose-headings:font-headline prose-headings:text-primary 
                      prose-a:text-accent prose-a:transition-colors hover:prose-a:text-accent/80
-                     prose-strong:font-semibold prose-strong:text-foreground"
+                     prose-strong:font-semibold prose-strong:text-foreground
+                     [&_.lead]:text-xl [&_.lead]:text-foreground/80 [&_.lead]:italic"
           dangerouslySetInnerHTML={{ __html: post.content }} 
         />
-
-        <style jsx global>{`
-            .prose .lead {
-                @apply text-xl text-foreground/80 italic;
-            }
-        `}</style>
       </article>
     </div>
   );
