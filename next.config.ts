@@ -51,6 +51,12 @@ const nextConfig: NextConfig = {
         hostname: 'chinatopforwarder.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.innovaitors.ai',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
