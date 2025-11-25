@@ -25,11 +25,11 @@ export default function BlogPage() {
           {featuredPost.image && (
             <Image
               src={featuredPost.image.imageUrl}
-              alt={featuredPost.image.alt}
+              alt={featuredPost.title}
               fill
               className="object-cover shadow-lg"
               priority
-              data-ai-hint={featuredPost.image.hint}
+              data-ai-hint={featuredPost.image.imageHint}
             />
           )}
         </div>
@@ -72,10 +72,10 @@ export default function BlogPage() {
                   {post.image && (
                     <Image
                       src={post.image.imageUrl}
-                      alt={post.image.alt}
+                      alt={post.title}
                       fill
                       className="object-cover rounded-t-lg"
-                      data-ai-hint={post.image.hint}
+                      data-ai-hint={post.image.imageHint}
                     />
                   )}
                 </div>

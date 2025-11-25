@@ -1,10 +1,11 @@
+'use client';
+
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { blogPosts } from '@/lib/blog-posts';
 import { Calendar, User, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { use } from 'react';
 
 type BlogPostPageProps = {
   params: {
@@ -12,15 +13,8 @@ type BlogPostPageProps = {
   };
 };
 
-// export function generateStaticParams() {
-//   return blogPosts.map(post => ({
-//     slug: post.slug,
-//   }));
-// }
-
 export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = use(Promise.resolve(params));
-  const post = blogPosts.find(p => p.slug === slug);
+  const post = blogPosts.find(p => p.slug === params.slug);
 
   if (!post) {
     notFound();
@@ -53,11 +47,11 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="relative h-96 w-full rounded-lg overflow-hidden mb-12 shadow-lg">
             <Image
               src={post.image.imageUrl}
-              alt={post.image.alt}
+              alt={post.title}
               fill
               className="object-cover"
               priority
-              data-ai-hint={post.image.hint}
+              data-ai-hint={post.image.imageHint}
             />
           </div>
         )}
