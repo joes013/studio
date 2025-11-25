@@ -14,6 +14,7 @@ const navigationItems = [
   { href: '/', label: 'Inici' },
   { href: '/about', label: 'Sobre Nosaltres' },
   { href: '/services', label: 'Serveis' },
+  { href: '/blog', label: 'Blog' },
   { href: '/tracking', label: 'Seguiment' },
   { href: '/contact', label: 'Contacte' },
 ];
@@ -36,7 +37,7 @@ export function Header() {
               href={item.href}
               className={cn(
                 'transition-colors hover:text-accent',
-                pathname === item.href ? 'text-primary font-semibold' : 'text-foreground/60'
+                pathname.startsWith(item.href) && item.href !== '/' || pathname === item.href ? 'text-primary font-semibold' : 'text-foreground/60'
               )}
             >
               {item.label}
@@ -71,7 +72,7 @@ export function Header() {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
                         'text-lg font-medium transition-colors hover:text-accent',
-                       pathname === item.href ? 'text-primary' : 'text-foreground'
+                       pathname.startsWith(item.href) && item.href !== '/' || pathname === item.href ? 'text-primary' : 'text-foreground'
                       )}
                     >
                       {item.label}
