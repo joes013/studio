@@ -1,13 +1,13 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { Bot, Loader2, Sparkles } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
@@ -47,33 +47,32 @@ export function ServiceRequestForm() {
     },
   });
 
-  const watchedFields = useWatch({ control: form.control });
+  const handleGetSuggestions = () => {
+    const payload = {
+      ...form.getValues(),
+      weight: Number(form.getValues('weight')) || 0,
+    };
 
-  const getSuggestions = useCallback((data: FormValues) => {
     startAiTransition(async () => {
       try {
-        const result = await serviceRequestFormWithAI(data);
+        const result = await serviceRequestFormWithAI(payload);
         if (result?.suggestedCompletions) {
           setSuggestions(result.suggestedCompletions);
+          toast({
+            title: 'Suggeriments rebuts!',
+            description: 'L\'IA ha generat suggeriments per al formulari.',
+          });
         }
       } catch (error) {
         console.error('Error fetching AI suggestions:', error);
+        toast({
+            variant: 'destructive',
+            title: 'Error de l\'IA',
+            description: 'No s\'han pogut obtenir els suggeriments. Intenta-ho més tard.',
+        });
       }
     });
-  }, []);
-
-  useEffect(() => {
-    const debouncedFetch = setTimeout(() => {
-      // Create a valid payload even if form is not fully valid
-      const payload = {
-        ...form.getValues(),
-        weight: Number(form.getValues('weight')) || 0,
-      };
-      getSuggestions(payload);
-    }, 1000); // Debounce for 1 second
-
-    return () => clearTimeout(debouncedFetch);
-  }, [watchedFields, getSuggestions, form]);
+  };
 
   function onSubmit(values: FormValues) {
     console.log(values);
@@ -179,11 +178,22 @@ export function ServiceRequestForm() {
             <FormMessage />
           </FormItem>
         )} />
-        <div className="flex justify-between items-center pt-4">
-            <div className={cn("flex items-center gap-2 text-sm text-foreground/60 transition-opacity", isAiLoading ? "opacity-100" : "opacity-0")}>
-                <Bot className="h-4 w-4 animate-pulse" />
-                L'IA està pensant...
-            </div>
+        
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={handleGetSuggestions} 
+              disabled={isAiLoading}
+            >
+              {isAiLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Bot className="mr-2 h-4 w-4" />
+              )}
+              Obtenir Suggeriments de l'IA
+            </Button>
+
             <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Enviar Sol·licitud
