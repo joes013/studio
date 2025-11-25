@@ -45,6 +45,12 @@ const nextConfig: NextConfig = {
         hostname: 'didascalia.es',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'chinatopforwarder.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
