@@ -21,11 +21,7 @@ export const blogPosts: BlogPost[] = [
     date: '2024-07-15',
     author: 'Equip d\'EJA Globaltrans',
     excerpt: 'L\'automatització i la IA estan revolucionant el sector del transport. Descobreix com aquestes tecnologies estan optimitzant les cadenes de subministrament, millorant l\'eficiència i reduint costos.',
-    image: { 
-      url: blogAutomationImage.imageUrl, 
-      alt: blogAutomationImage.description, 
-      hint: blogAutomationImage.imageHint 
-    },
+    image: blogAutomationImage,
     content: `
       <p class="lead">L'automatització i la intel·ligència artificial (IA) ja no són conceptes de ciència-ficció, sinó realitats tangibles que estan transformant radicalment el sector de la logística i el transport. Des de magatzems intel·ligents fins a la planificació de rutes optimitzades per IA, la tecnologia està creant una cadena de subministrament més ràpida, eficient i resilient.</p>
       
@@ -45,11 +41,7 @@ export const blogPosts: BlogPost[] = [
     date: '2024-06-28',
     author: 'Equip d\'EJA Globaltrans',
     excerpt: 'El transport és un dels sectors clau en la lluita contra el canvi climàtic. Explorem les últimes innovacions en vehicles elèctrics, combustibles alternatius i logística verda.',
-    image: { 
-      url: blogSustainabilityImage.imageUrl, 
-      alt: blogSustainabilityImage.description, 
-      hint: blogSustainabilityImage.imageHint
-    },
+    image: blogSustainabilityImage,
     content: `
       <p class="lead">La sostenibilitat ha deixat de ser una opció per convertir-se en una necessitat imperant en el sector del transport. La pressió reguladora, la demanda dels consumidors i la pròpia consciència ecològica estan impulsant una autèntica "revolució verda" sobre rodes.</p>
       
@@ -68,11 +60,7 @@ export const blogPosts: BlogPost[] = [
     date: '2024-06-10',
     author: 'Equip d\'EJA Globaltrans',
     excerpt: 'Els enviaments internacionals poden ser complexos. Una correcta gestió duanera és clau per evitar retards i sobrecostos. Aquí tens alguns consells pràctics.',
-    image: { 
-      url: blogCustomsImage.imageUrl, 
-      alt: blogCustomsImage.description, 
-      hint: blogCustomsImage.imageHint 
-    },
+    image: blogCustomsImage,
     content: `
       <p class="lead">Exportar o importar mercaderies pot obrir nous mercats per al teu negoci, però la burocràcia duanera pot semblar un laberint. Una planificació acurada i el coneixement dels requisits són essencials per garantir que els teus enviaments flueixin sense problemes a través de les fronteres.</p>
       

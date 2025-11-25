@@ -4,6 +4,7 @@ import { blogPosts } from '@/lib/blog-posts';
 import { Calendar, User, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { use } from 'react';
 
 type BlogPostPageProps = {
   params: {
@@ -11,14 +12,15 @@ type BlogPostPageProps = {
   };
 };
 
-export function generateStaticParams() {
-  return blogPosts.map(post => ({
-    slug: post.slug,
-  }));
-}
+// export function generateStaticParams() {
+//   return blogPosts.map(post => ({
+//     slug: post.slug,
+//   }));
+// }
 
 export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = blogPosts.find(p => p.slug === params.slug);
+  const { slug } = use(Promise.resolve(params));
+  const post = blogPosts.find(p => p.slug === slug);
 
   if (!post) {
     notFound();
@@ -50,7 +52,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
         {post.image && (
           <div className="relative h-96 w-full rounded-lg overflow-hidden mb-12 shadow-lg">
             <Image
-              src={post.image.url}
+              src={post.image.imageUrl}
               alt={post.image.alt}
               fill
               className="object-cover"
@@ -65,6 +67,8 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
                      prose-p:mb-4 prose-headings:font-headline prose-headings:text-primary 
                      prose-a:text-accent prose-a:transition-colors hover:prose-a:text-accent/80
                      prose-strong:font-semibold prose-strong:text-foreground
+                     prose-blockquote:border-l-accent prose-blockquote:pl-4 prose-blockquote:italic
+                     prose-ul:list-disc prose-ul:pl-6 prose-ol:list-decimal prose-ol:pl-6
                      [&_.lead]:text-xl [&_.lead]:text-foreground/80 [&_.lead]:italic"
           dangerouslySetInnerHTML={{ __html: post.content }} 
         />

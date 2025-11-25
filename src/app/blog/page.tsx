@@ -24,7 +24,7 @@ export default function BlogPage() {
         <div className="relative h-80 lg:h-full w-full rounded-lg overflow-hidden">
           {featuredPost.image && (
             <Image
-              src={featuredPost.image.url}
+              src={featuredPost.image.imageUrl}
               alt={featuredPost.image.alt}
               fill
               className="object-cover shadow-lg"
@@ -71,7 +71,7 @@ export default function BlogPage() {
                 <div className="relative h-64 w-full">
                   {post.image && (
                     <Image
-                      src={post.image.url}
+                      src={post.image.imageUrl}
                       alt={post.image.alt}
                       fill
                       className="object-cover rounded-t-lg"
