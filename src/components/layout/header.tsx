@@ -14,6 +14,7 @@ const navigationItems = [
   { href: '/', label: 'Inici' },
   { href: '/about', label: 'Sobre Nosaltres' },
   { href: '/services', label: 'Serveis' },
+  { href: '/prices', label: 'Preus' },
   { href: '/blog', label: 'Blog' },
   { href: '/tracking', label: 'Seguiment' },
   { href: '/contact', label: 'Contacte' },

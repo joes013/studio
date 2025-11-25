@@ -19,6 +19,7 @@ export function Footer() {
             <div className="mt-4 flex flex-col space-y-2">
               <Link href="/about" className="text-sm text-foreground/80 hover:text-accent">Sobre Nosaltres</Link>
               <Link href="/services" className="text-sm text-foreground/80 hover:text-accent">Serveis</Link>
+              <Link href="/prices" className="text-sm text-foreground/80 hover:text-accent">Preus</Link>
               <Link href="/blog" className="text-sm text-foreground/80 hover:text-accent">Blog</Link>
               <Link href="/tracking" className="text-sm text-foreground/80 hover:text-accent">Seguiment</Link>
               <Link href="/request-service" className="text-sm text-foreground/80 hover:text-accent">Sol·licitar Servei</Link>
