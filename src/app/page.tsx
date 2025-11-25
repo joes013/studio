@@ -1,10 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Package, Truck, Warehouse } from 'lucide-react';
+import { ArrowRight, Package, Truck, Warehouse, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-truck');
+const sustainabilityImage = PlaceHolderImages.find(p => p.id === 'blog-sustainability');
+
 
 const features = [
   {
@@ -72,6 +74,39 @@ export default function Home() {
                 <p className="mt-2 text-foreground/80">{feature.description}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Sustainability Section */}
+      <section className="bg-white py-16 sm:py-24">
+        <div className="container max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="relative h-80 lg:h-96 w-full rounded-lg overflow-hidden">
+              {sustainabilityImage && (
+                <Image
+                  src={sustainabilityImage.imageUrl}
+                  alt={sustainabilityImage.description}
+                  fill
+                  className="object-cover shadow-lg"
+                  data-ai-hint={sustainabilityImage.imageHint}
+                />
+              )}
+            </div>
+            <div className="space-y-6">
+                <div className="inline-block p-3 bg-accent/10 rounded-full">
+                    <Leaf className="h-8 w-8 text-accent" />
+                </div>
+              <h2 className="text-3xl font-bold font-headline tracking-tight sm:text-4xl">El Nostre Compromís amb la Sostenibilitat</h2>
+              <p className="text-lg text-foreground/80">
+                A EJA Globaltrans, estem dedicats a reduir la nostra petjada ecològica. Invertim en una flota moderna i eficient, optimitzem rutes per minimitzar el consum de combustible i explorem activament l'ús de tecnologies més netes per construir un futur més verd per a la logística.
+              </p>
+              <Button asChild variant="link" className="px-0 text-lg">
+                <Link href="/blog/sostenibilitat-en-el-transport-la-revolucio-verda">
+                  Descobreix les nostres iniciatives <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
