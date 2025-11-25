@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Package, Truck, Warehouse, Leaf } from 'lucide-react';
+import { ArrowRight, Package, Truck, Warehouse, Leaf, Wind, Recycle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -25,6 +25,24 @@ const features = [
     description: 'Lliuraments d\'última milla eficients per arribar a qualsevol punt que necessitis.',
   },
 ];
+
+const sustainabilityFeatures = [
+    {
+      icon: <Truck className="h-8 w-8 text-accent" />,
+      title: 'Flota Moderna i Eficient',
+      description: 'Invertim en vehicles d\'última generació que redueixen les emissions i optimitzen el consum de combustible.'
+    },
+    {
+      icon: <Wind className="h-8 w-8 text-accent" />,
+      title: 'Optimització de Rutes',
+      description: 'Utilitzem tecnologia per planificar les rutes més curtes i eficients, minimitzant la nostra petjada de carboni.'
+    },
+    {
+      icon: <Recycle className="h-8 w-8 text-accent" />,
+      title: 'Logística Verda',
+      description: 'Promovem la consolidació de càrregues i l\'ús d\'embalatges sostenibles per reduir residus.'
+    }
+  ];
 
 export default function Home() {
   return (
@@ -81,33 +99,23 @@ export default function Home() {
       {/* Sustainability Section */}
       <section className="bg-white py-16 sm:py-24">
         <div className="container max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="relative h-80 lg:h-96 w-full rounded-lg overflow-hidden">
-              {sustainabilityImage && (
-                <Image
-                  src={sustainabilityImage.imageUrl}
-                  alt={sustainabilityImage.description}
-                  fill
-                  className="object-cover shadow-lg"
-                  data-ai-hint={sustainabilityImage.imageHint}
-                />
-              )}
+            <div className="text-center">
+                <h2 className="text-3xl font-bold font-headline tracking-tight sm:text-4xl">El Nostre Compromís amb la Sostenibilitat</h2>
+                <p className="mt-4 max-w-2xl mx-auto text-lg text-foreground/80">
+                    Estem dedicats a construir un futur més verd per a la logística, implementant pràctiques que cuiden el nostre planeta.
+                </p>
             </div>
-            <div className="space-y-6">
-                <div className="inline-block p-3 bg-accent/10 rounded-full">
-                    <Leaf className="h-8 w-8 text-accent" />
+            <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+                {sustainabilityFeatures.map((feature) => (
+                <div key={feature.title} className="flex flex-col items-center text-center">
+                    <div className="inline-block p-4 bg-accent/10 rounded-full">
+                        {feature.icon}
+                    </div>
+                    <h3 className="mt-5 text-xl font-semibold font-headline">{feature.title}</h3>
+                    <p className="mt-2 text-foreground/80">{feature.description}</p>
                 </div>
-              <h2 className="text-3xl font-bold font-headline tracking-tight sm:text-4xl">El Nostre Compromís amb la Sostenibilitat</h2>
-              <p className="text-lg text-foreground/80">
-                A EJA Globaltrans, estem dedicats a reduir la nostra petjada ecològica. Invertim en una flota moderna i eficient, optimitzem rutes per minimitzar el consum de combustible i explorem activament l'ús de tecnologies més netes per construir un futur més verd per a la logística.
-              </p>
-              <Button asChild variant="link" className="px-0 text-lg">
-                <Link href="/blog/sostenibilitat-en-el-transport-la-revolucio-verda">
-                  Descobreix les nostres iniciatives <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+                ))}
             </div>
-          </div>
         </div>
       </section>
 
