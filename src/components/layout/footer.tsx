@@ -22,6 +22,7 @@ export function Footer() {
               <Link href="/prices" className="text-sm text-foreground/80 hover:text-accent">Preus</Link>
               <Link href="/blog" className="text-sm text-foreground/80 hover:text-accent">Blog</Link>
               <Link href="/tracking" className="text-sm text-foreground/80 hover:text-accent">Seguiment</Link>
+              <Link href="/dashboard" className="text-sm text-foreground/80 hover:text-accent">Gestió</Link>
               <Link href="/request-service" className="text-sm text-foreground/80 hover:text-accent">Sol·licitar Servei</Link>
             </div>
           </div>

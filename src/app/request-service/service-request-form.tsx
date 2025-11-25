@@ -13,6 +13,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { serviceRequestFormWithAI, ServiceRequestFormOutput } from '@/ai/flows/service-request-form-ai';
 import { cn } from '@/lib/utils';
+import { useUser } from '@/firebase/auth/use-user';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
 
 const formSchema = z.object({
   customerName: z.string().min(2, { message: 'El nom ha de tenir almenys 2 caràcters.' }),
@@ -32,6 +35,8 @@ export function ServiceRequestForm() {
   const { toast } = useToast();
   const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
   const [isAiLoading, startAiTransition] = useTransition();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -74,15 +79,42 @@ export function ServiceRequestForm() {
     });
   };
 
-  function onSubmit(values: FormValues) {
-    console.log(values);
-    toast({
-      title: 'Sol·licitud Enviada!',
-      description: 'Hem rebut la teva sol·licitud. Ens posarem en contacte aviat.',
-      variant: 'default',
-    });
-    form.reset();
-    setSuggestions(null);
+  async function onSubmit(values: FormValues) {
+    if (!user || !firestore) {
+        toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Has d\'iniciar sessió per enviar una sol·licitud.',
+        });
+        return;
+    }
+
+    try {
+        const quoteRequestData = {
+            ...values,
+            userId: user.uid,
+            status: 'Pendent',
+            createdAt: serverTimestamp(),
+        };
+
+        const collectionRef = collection(firestore, 'users', user.uid, 'quoteRequests');
+        await addDoc(collectionRef, quoteRequestData);
+
+        toast({
+            title: 'Sol·licitud Enviada!',
+            description: 'Hem rebut la teva sol·licitud. Pots veure el seu estat al teu panell de gestió.',
+            variant: 'default',
+        });
+        form.reset();
+        setSuggestions(null);
+    } catch (error) {
+        console.error("Error saving service request: ", error);
+        toast({
+            variant: 'destructive',
+            title: 'Error en desar',
+            description: 'No s\'ha pogut desar la sol·licitud. Si us plau, torna a intentar-ho.',
+        });
+    }
   }
   
   const renderSuggestion = (field: keyof Suggestions) => {

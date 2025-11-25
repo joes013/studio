@@ -1,0 +1,108 @@
+/**
+ * This ruleset enforces a strict user-ownership model for a logistics application.
+ *
+ * Core Philosophy:
+ * The security model ensures that users can only access data that exists within their own dedicated data tree. All operations (read, write, delete) are restricted to the authenticated owner of that data, providing strong data privacy and isolation between users.
+ *
+ * Data Structure:
+ * All user-specific data, including 'quoteRequests' and 'serviceOrders', is organized hierarchically under the path /users/{userId}. This structure makes ownership explicit in the document path, simplifying security rules.
+ *
+ * Key Security Decisions:
+ * - User Isolation: A user cannot read, write, or even know about the existence of data belonging to another user.
+ * - No Public Data: There are no globally accessible collections. All data is private.
+ * - User Listing Disabled: It is not possible to query the top-level '/users' collection, preventing user enumeration.
+ * - Prototyping Flexibility: While authorization is strict, the rules do not enforce specific data schemas (e.g., field types or required fields), allowing for rapid application development and iteration.
+ *
+ * Denormalization for Authorization:
+ * The data structure is inherently designed for efficient authorization. By nesting all user data under a path containing their user ID (e.g., /users/{userId}/...), ownership can be checked directly from the path without needing to read other documents (avoiding `get()` calls). This results in faster, more scalable, and more secure rules.
+ *
+ * Structural Segregation:
+ * The model segregates data by type into distinct subcollections (quoteRequests, serviceOrders) under each user. This provides clear organization and allows for granular security and querying on a per-collection basis.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ----------------------------------------------------------------------
+    // Helper Functions
+    // ----------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the given userId.
+     * This is the primary function for enforcing user-specific data access.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+    
+    /**
+     * Checks for ownership on an existing document. Used for safe updates and deletes.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    // ----------------------------------------------------------------------
+    // User Data Rules
+    // ----------------------------------------------------------------------
+
+    /**
+     * @description Controls access to a user's root document. Users can create and manage their own profile, but cannot see or list others'.
+     * @path /users/{userId}
+     * @allow A signed-in user (uid: 'user123') creating their own document at /users/user123. (create)
+     * @deny An anonymous user trying to read /users/user123. (get)
+     * @deny A signed-in user (uid: 'user456') trying to read /users/user123. (get)
+     * @deny Any user trying to query the entire /users collection. (list)
+     * @principle Restricts access to a user's own data tree and prevents user enumeration.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if false; // Disallow self-deletion for safety.
+    }
+
+    /**
+     * @description Secures quote requests, ensuring they are only accessible to the user who created them.
+     * @path /users/{userId}/quoteRequests/{quoteRequestId}
+     * @allow A user (uid: 'user123') creating a new quote request at /users/user123/quoteRequests/req_abc. (create)
+     * @allow A user (uid: 'user123') listing their own quote requests at /users/user123/quoteRequests. (list)
+     * @deny A different user (uid: 'user456') trying to read a quote request at /users/user123/quoteRequests/req_abc. (get)
+     * @deny An anonymous user trying to delete any quote request. (delete)
+     * @principle Enforces strict data ownership within a user's private subcollection.
+     */
+    match /users/{userId}/quoteRequests/{quoteRequestId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+    
+     /**
+     * @description Secures service orders, ensuring they are only accessible to the user who placed them.
+     * @path /users/{userId}/serviceOrders/{serviceOrderId}
+     * @allow A user (uid: 'user123') updating their own service order at /users/user123/serviceOrders/ord_xyz. (update)
+     * @allow A user (uid: 'user123') reading their own service order at /users/user123/serviceOrders/ord_xyz. (get)
+     * @deny A different user (uid: 'user456') trying to list service orders at /users/user123/serviceOrders. (list)
+     * @deny Any user trying to create a service order for another user. (create)
+     * @principle Enforces strict data ownership within a user's private subcollection.
+     */
+    match /users/{userId}/serviceOrders/{serviceOrderId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId);
+        allow update: if isExistingOwner(userId);
+        allow delete: if isExistingOwner(userId);
+    }
+
+  }
+}
