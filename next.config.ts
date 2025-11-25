@@ -63,6 +63,12 @@ const nextConfig: NextConfig = {
         hostname: 'media.licdn.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.transportes-martin.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
