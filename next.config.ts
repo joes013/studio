@@ -39,6 +39,12 @@ const nextConfig: NextConfig = {
         hostname: 'celering.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'didascalia.es',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
