@@ -57,6 +57,12 @@ const nextConfig: NextConfig = {
         hostname: 'www.innovaitors.ai',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'media.licdn.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
