@@ -7,21 +7,41 @@ export interface BlogPost {
   author: string;
   excerpt: string;
   content: string;
-  image: ImagePlaceholder;
+  image?: ImagePlaceholder;
 }
 
-const blogAutomationImage = PlaceHolderImages.find(p => p.id === 'blog-automation')!;
-const blogSustainabilityImage = PlaceHolderImages.find(p => p.id === 'blog-sustainability')!;
-const blogCustomsImage = PlaceHolderImages.find(p => p.id === 'blog-customs')!;
 
-export const blogPosts: BlogPost[] = [
+const blogPostsData: Omit<BlogPost, 'image'>[] = [
+  {
+    slug: 'transport-productes-quimics-carretera',
+    title: 'Transport de Productes Químics: Seguretat i Eficiència',
+    date: '2024-07-29',
+    author: 'Equip d\'EJA Globaltrans',
+    excerpt: 'El transport de productes químics per carretera no és una tasca que es pugui prendre a la lleugera. Exigeix seguretat, rapidesa i el compliment d\'una normativa estricta.',
+    content: `
+      <p class="lead">El transport de productes químics per carretera no es una tasca que pugui dur a terme qualsevol i de qualsevol manera. Amb clients importants dins el sector, cada viatge porta amb ell una alta responsabilitat la qual exigeix seguretat, rapidesa i el compliment d’un seguit de normes. A EJA Globaltrans, com a empresa especialitzada en el sector de l’ADR, hem desenvolupat un seguit de protocols i processos que asseguren que en cada enviament es compleixi amb tots els estàndards necessaris.</p>
+      
+      <h3 class="text-2xl font-bold mt-8 mb-4 font-headline">Compliment Estricte de la Normativa ADR</h3>
+      <p>El pilar fonamental en el qual basem els nostres valors és el compliment de la normativa ADR. Cada vehicle de la nostra flota està adequadament equipat amb la senyalització, els equips de seguretat i materials d’emergència necessaris per a fer front a qualsevol imprevist. Mentrestant, tots els nostres conductors reben una formació contínua per poder actuar davant de qualsevol incident amb la màxima rapidesa i eficàcia possible. Aquesta preparació minimitza els riscos per a les persones, els materials i el medi ambient.</p>
+      
+      <h3 class="text-2xl font-bold mt-8 mb-4 font-headline">Planificació de Rutes i Coordinació</h3>
+      <p>Un altre punt fonamental és la planificació de rutes. El transport de productes químics demana evitar zones de risc, respectar estrictament els temps de conducció i assegurar que la càrrega es mantingui en condicions òptimes durant tot el trajecte. A més, coordinem cada lliurament amb els nostres clients, adaptant horaris i dates segons les seves necessitats, per garantir que el producte arribi puntual i segur.</p>
+
+      <h3 class="text-2xl font-bold mt-8 mb-4 font-headline">Formació dels Conductors: La Clau de l'Èxit</h3>
+      <p>La formació dels conductors és un punt clau perquè tot surti bé. Cada xofer coneix perfectament les mercaderies transportades, com reaccionar en situacions adverses, com manipular la càrrega de manera segura i quins passos seguir en una situació d’emergència. Tot això, en conjunt, ajuda a evitar problemes majors.</p>
+      
+      <h3 class="text-2xl font-bold mt-8 mb-4 font-headline">Comunicació Constant amb el Client</h3>
+      <p>Creiem que és indispensable mantenir el client al corrent de tot el que passa durant el transport. Per aquest motiu, mantenim una comunicació proactiva, informant sobre qualsevol detall sol·licitat. Aquesta transparència no només aporta confiança, sinó que també permet anticipar i resoldre qualsevol imprevist abans que afecti el lliurament.</p>
+
+      <p class="mt-4">En resum, transportar productes químics per carretera amb rapidesa i seguretat requereix molt més que vehicles i permisos. És un compromís constant amb la professionalitat, la seguretat i la coordinació. A EJA Globaltrans, combinem tecnologia, experiència i protocols estrictes per assegurar que cada enviament es compleixi amb la màxima seguretat i eficiència.</p>
+    `,
+  },
   {
     slug: 'el-futur-de-la-logistica-automatitzacio-i-ia',
     title: 'El Futur de la Logística: Automatització i Intel·ligència Artificial',
     date: '2024-07-15',
     author: 'Equip d\'EJA Globaltrans',
     excerpt: 'L\'automatització i la IA estan revolucionant el sector del transport. Descobreix com aquestes tecnologies estan optimitzant les cadenes de subministrament, millorant l\'eficiència i reduint costos.',
-    image: blogAutomationImage,
     content: `
       <p class="lead">L'automatització i la intel·ligència artificial (IA) ja no són conceptes de ciència-ficció, sinó realitats tangibles que estan transformant radicalment el sector de la logística i el transport. Des de magatzems intel·ligents fins a la planificació de rutes optimitzades per IA, la tecnologia està creant una cadena de subministrament més ràpida, eficient i resilient.</p>
       
@@ -41,7 +61,6 @@ export const blogPosts: BlogPost[] = [
     date: '2024-06-28',
     author: 'Equip d\'EJA Globaltrans',
     excerpt: 'El transport és un dels sectors clau en la lluita contra el canvi climàtic. Explorem les últimes innovacions en vehicles elèctrics, combustibles alternatius i logística verda.',
-    image: blogSustainabilityImage,
     content: `
       <p class="lead">La sostenibilitat ha deixat de ser una opció per convertir-se en una necessitat imperant en el sector del transport. La pressió reguladora, la demanda dels consumidors i la pròpia consciència ecològica estan impulsant una autèntica "revolució verda" sobre rodes.</p>
       
@@ -60,7 +79,6 @@ export const blogPosts: BlogPost[] = [
     date: '2024-06-10',
     author: 'Equip d\'EJA Globaltrans',
     excerpt: 'Els enviaments internacionals poden ser complexos. Una correcta gestió duanera és clau per evitar retards i sobrecostos. Aquí tens alguns consells pràctics.',
-    image: blogCustomsImage,
     content: `
       <p class="lead">Exportar o importar mercaderies pot obrir nous mercats per al teu negoci, però la burocràcia duanera pot semblar un laberint. Una planificació acurada i el coneixement dels requisits són essencials per garantir que els teus enviaments flueixin sense problemes a través de les fronteres.</p>
       
@@ -78,3 +96,15 @@ export const blogPosts: BlogPost[] = [
     `,
   },
 ];
+
+const imageMap: { [slug: string]: string } = {
+  'transport-productes-quimics-carretera': 'blog-chemicals',
+  'el-futur-de-la-logistica-automatitzacio-i-ia': 'blog-automation',
+  'sostenibilitat-en-el-transport-la-revolucio-verda': 'blog-sustainability',
+  'consells-per-a-enviaments-internacionals': 'blog-customs',
+};
+
+export const blogPosts: BlogPost[] = blogPostsData.map(post => ({
+  ...post,
+  image: PlaceHolderImages.find(p => p.id === imageMap[post.slug]),
+}));
