@@ -2,20 +2,40 @@
 
 import { useUser } from '@/firebase/auth/use-user';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
-    const { user, isLoading, signInWithGoogle } = useUser();
+    const { user, isLoading: isUserLoading, signInWithGoogle } = useUser();
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (user) {
             router.push('/dashboard');
         }
     }, [user, router]);
+    
+    const handleSignIn = async () => {
+        setIsLoading(true);
+        try {
+            await signInWithGoogle();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            // The redirection will be handled by the useEffect
+        }
+    }
+
+    if (isUserLoading) {
+         return (
+            <div className="container mx-auto flex items-center justify-center min-h-[calc(100vh-200px)]">
+                <Loader2 className="h-16 w-16 animate-spin" />
+            </div>
+        );
+    }
 
     return (
         <div className="container mx-auto flex items-center justify-center min-h-[calc(100vh-200px)]">
@@ -28,9 +48,10 @@ export default function LoginPage() {
                     {isLoading ? (
                         <div className="flex justify-center items-center py-8">
                             <Loader2 className="h-8 w-8 animate-spin" />
+                            <p className="ml-4">Redirigint a Google...</p>
                         </div>
                     ) : (
-                        <Button onClick={signInWithGoogle} className="w-full" size="lg">
+                        <Button onClick={handleSignIn} className="w-full" size="lg">
                             Iniciar sessió amb Google
                         </Button>
                     )}
