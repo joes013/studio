@@ -1,3 +1,5 @@
+'use client';
+
 import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
 import { firebaseConfig } from './config';
 import { Auth, getAuth } from 'firebase/auth';
@@ -15,16 +17,15 @@ import { useUser } from './auth/use-user';
 import { FirebaseClientProvider } from './client-provider';
 
 let firebaseApp: FirebaseApp;
-let auth: Auth;
-let firestore: Firestore;
 
 // This guard is needed to prevent re-initialization on hot reloads.
-export const initializeFirebase = () => {
-  if (getApps().length === 0) {
-    return initializeApp(firebaseConfig);
-  }
-  return getApps()[0];
-};
+if (getApps().length === 0) {
+  firebaseApp = initializeApp(firebaseConfig);
+} else {
+  firebaseApp = getApps()[0];
+}
+
+export const initializeFirebase = () => firebaseApp;
 
 export {
   FirebaseProvider,
