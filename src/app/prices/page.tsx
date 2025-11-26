@@ -6,7 +6,7 @@ import Link from 'next/link';
 const pricingTiers = [
   {
     name: 'Transport Nacional',
-    price: 'Des de 55€',
+    price: 'Des de 185€',
     description: 'Solucions de càrrega completa (FTL) i grupaje (LTL) a tota la península.',
     features: [
       'Lliuraments en 24-72h',
