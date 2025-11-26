@@ -18,11 +18,10 @@ let firebaseApp: FirebaseApp;
 let auth: Auth;
 let firestore: Firestore;
 
+// This guard is needed to prevent re-initialization on hot reloads.
 export const initializeFirebase = () => {
   if (getApps().length === 0) {
-    firebaseApp = initializeApp(firebaseConfig);
-    auth = getAuth(firebaseApp);
-    firestore = getFirestore(firebaseApp);
+    return initializeApp(firebaseConfig);
   }
   return getApps()[0];
 };
