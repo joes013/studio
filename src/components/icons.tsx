@@ -9,7 +9,7 @@ export function Logo(props: SVGProps<HTMLDivElement>) {
         El component 'Image' de Next.js l'optimitzarà automàticament.
       */}
       <Image 
-        src="/logo.png" // La ruta comença amb '/' perquè apunta a la carpeta 'public'
+        src="https://static.vecteezy.com/system/resources/previews/002/638/049/non_2x/e-gold-letter-logo-alphabet-for-business-and-company-with-yellow-color-corporate-brading-and-lettering-with-golden-metal-design-and-wing-vector.jpg"
         alt="EJA Globaltrans Logo" 
         width={32} 
         height={32} 

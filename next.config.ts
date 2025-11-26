@@ -69,6 +69,12 @@ const nextConfig: NextConfig = {
         hostname: 'www.transportes-martin.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'static.vecteezy.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
