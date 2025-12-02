@@ -3,16 +3,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { useState, useTransition } from 'react';
-import { Bot, Loader2, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { serviceRequestFormWithAI, ServiceRequestFormOutput } from '@/ai/flows/service-request-form-ai';
-import { cn } from '@/lib/utils';
 import { useUser } from '@/firebase/auth/use-user';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
@@ -29,12 +27,9 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
-type Suggestions = ServiceRequestFormOutput['suggestedCompletions'];
 
 export function ServiceRequestForm() {
   const { toast } = useToast();
-  const [suggestions, setSuggestions] = useState<Suggestions | null>(null);
-  const [isAiLoading, startAiTransition] = useTransition();
   const { user } = useUser();
   const firestore = useFirestore();
 
@@ -52,32 +47,6 @@ export function ServiceRequestForm() {
     },
   });
 
-  const handleGetSuggestions = () => {
-    const payload = {
-      ...form.getValues(),
-      weight: Number(form.getValues('weight')) || 0,
-    };
-
-    startAiTransition(async () => {
-      try {
-        const result = await serviceRequestFormWithAI(payload);
-        if (result?.suggestedCompletions) {
-          setSuggestions(result.suggestedCompletions);
-          toast({
-            title: 'Suggeriments rebuts!',
-            description: 'L\'IA ha generat suggeriments per al formulari.',
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching AI suggestions:', error);
-        toast({
-            variant: 'destructive',
-            title: 'Error de l\'IA',
-            description: 'No s\'han pogut obtenir els suggeriments. Intenta-ho més tard.',
-        });
-      }
-    });
-  };
 
   async function onSubmit(values: FormValues) {
     // Send to Formspree
@@ -121,7 +90,6 @@ export function ServiceRequestForm() {
               variant: 'default',
           });
           form.reset();
-          setSuggestions(null);
       } catch (error) {
           console.error("Error saving service request: ", error);
           toast({
@@ -138,30 +106,9 @@ export function ServiceRequestForm() {
             variant: 'default',
         });
         form.reset();
-        setSuggestions(null);
     }
   }
   
-  const renderSuggestion = (field: keyof Suggestions) => {
-    const suggestionValue = suggestions?.[field];
-    if (!suggestionValue || String(suggestionValue) === String(form.getValues(field))) return null;
-
-    return (
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="mt-2 h-auto py-1 px-2 text-xs"
-        onClick={() => {
-            form.setValue(field, suggestionValue as any, { shouldValidate: true });
-        }}
-      >
-        <Sparkles className="mr-2 h-3 w-3 text-accent" />
-        Suggeriment: {suggestionValue.toString()}
-      </Button>
-    );
-  };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -170,7 +117,6 @@ export function ServiceRequestForm() {
             <FormItem>
               <FormLabel>Nom del client</FormLabel>
               <FormControl><Input placeholder="Ex: Joan Petit" {...field} /></FormControl>
-              {renderSuggestion('customerName')}
               <FormMessage />
             </FormItem>
           )} />
@@ -178,7 +124,6 @@ export function ServiceRequestForm() {
             <FormItem>
               <FormLabel>Contacte (Telèfon o Email)</FormLabel>
               <FormControl><Input placeholder="Ex: 600123456 o joan@exemple.com" {...field} /></FormControl>
-              {renderSuggestion('customerContact')}
               <FormMessage />
             </FormItem>
           )} />
@@ -188,7 +133,6 @@ export function ServiceRequestForm() {
             <FormItem>
               <FormLabel>Adreça de recollida</FormLabel>
               <FormControl><Input placeholder="Carrer, número, ciutat, codi postal" {...field} /></FormControl>
-              {renderSuggestion('pickupLocation')}
               <FormMessage />
             </FormItem>
           )} />
@@ -196,7 +140,6 @@ export function ServiceRequestForm() {
             <FormItem>
               <FormLabel>Adreça de lliurament</FormLabel>
               <FormControl><Input placeholder="Carrer, número, ciutat, codi postal" {...field} /></FormControl>
-              {renderSuggestion('deliveryLocation')}
               <FormMessage />
             </FormItem>
           )} />
@@ -205,7 +148,6 @@ export function ServiceRequestForm() {
           <FormItem>
             <FormLabel>Descripció de la mercaderia</FormLabel>
             <FormControl><Textarea placeholder="Descriu el contingut, tipus d'embalatge, etc." {...field} /></FormControl>
-            {renderSuggestion('itemDescription')}
             <FormMessage />
           </FormItem>
         )} />
@@ -214,7 +156,6 @@ export function ServiceRequestForm() {
             <FormItem>
               <FormLabel>Pes (kg)</FormLabel>
               <FormControl><Input type="number" placeholder="Ex: 50" {...field} /></FormControl>
-              {renderSuggestion('weight')}
               <FormMessage />
             </FormItem>
           )} />
@@ -222,7 +163,6 @@ export function ServiceRequestForm() {
             <FormItem>
               <FormLabel>Dimensions (cm)</FormLabel>
               <FormControl><Input placeholder="Llargada x Amplada x Alçada (ex: 100x50x30)" {...field} /></FormControl>
-              {renderSuggestion('dimensions')}
               <FormMessage />
             </FormItem>
           )} />
@@ -231,26 +171,11 @@ export function ServiceRequestForm() {
           <FormItem>
             <FormLabel>Instruccions especials (opcional)</FormLabel>
             <FormControl><Textarea placeholder="Ex: mercaderia fràgil, lliurar en horari de matí..." {...field} /></FormControl>
-            {renderSuggestion('specialInstructions')}
             <FormMessage />
           </FormItem>
         )} />
         
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t">
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={handleGetSuggestions} 
-              disabled={isAiLoading}
-            >
-              {isAiLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Bot className="mr-2 h-4 w-4" />
-              )}
-              Obtenir Suggeriments de l'IA
-            </Button>
-
+        <div className="flex justify-end pt-4 border-t">
             <Button type="submit" size="lg" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Enviar Sol·licitud
