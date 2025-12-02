@@ -22,18 +22,18 @@ export default function ContactPage() {
         <Card>
           <CardContent className="p-8">
             <h2 className="text-2xl font-bold font-headline mb-6">Envia'ns un missatge</h2>
-            <form action="#" className="space-y-6">
+            <form action="https://formspree.io/f/movgwnzj" method="POST" className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">Nom complet</label>
-                <Input type="text" id="name" name="name" placeholder="El teu nom" />
+                <Input type="text" id="name" name="name" placeholder="El teu nom" required />
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">Correu electrònic</label>
-                <Input type="email" id="email" name="email" placeholder="el.teu@email.com" />
+                <Input type="email" id="email" name="email" placeholder="el.teu@email.com" required />
               </div>
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-foreground mb-1">Missatge</label>
-                <Textarea id="message" name="message" rows={5} placeholder="Com et podem ajudar?" />
+                <Textarea id="message" name="message" rows={5} placeholder="Com et podem ajudar?" required />
               </div>
               <Button type="submit" className="w-full" size="lg">Enviar Missatge</Button>
             </form>

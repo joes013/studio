@@ -80,40 +80,65 @@ export function ServiceRequestForm() {
   };
 
   async function onSubmit(values: FormValues) {
-    if (!user || !firestore) {
+    // Send to Formspree
+    try {
+        const response = await fetch('https://formspree.io/f/movgwnzj', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(values),
+        });
+        if (!response.ok) {
+            throw new Error('Formspree submission failed');
+        }
+    } catch(formspreeError) {
+        console.error("Error submitting to Formspree: ", formspreeError);
         toast({
             variant: 'destructive',
-            title: 'Error',
-            description: 'Has d\'iniciar sessió per enviar una sol·licitud.',
+            title: 'Error en l\'enviament',
+            description: 'No s\'ha pogut enviar la sol·licitud a través de Formspree.',
         });
-        return;
+        return; // Stop if formspree fails
     }
 
-    try {
-        const quoteRequestData = {
-            ...values,
-            userId: user.uid,
-            status: 'Pendent',
-            createdAt: serverTimestamp(),
-        };
+    // Save to Firestore if user is logged in
+    if (user && firestore) {
+      try {
+          const quoteRequestData = {
+              ...values,
+              userId: user.uid,
+              status: 'Pendent',
+              createdAt: serverTimestamp(),
+          };
 
-        const collectionRef = collection(firestore, 'users', user.uid, 'quoteRequests');
-        await addDoc(collectionRef, quoteRequestData);
+          const collectionRef = collection(firestore, 'users', user.uid, 'quoteRequests');
+          await addDoc(collectionRef, quoteRequestData);
 
+          toast({
+              title: 'Sol·licitud Enviada!',
+              description: 'Hem rebut la teva sol·licitud. Pots veure el seu estat al teu panell de gestió.',
+              variant: 'default',
+          });
+          form.reset();
+          setSuggestions(null);
+      } catch (error) {
+          console.error("Error saving service request: ", error);
+          toast({
+              variant: 'destructive',
+              title: 'Error en desar',
+              description: 'S\'ha enviat el correu, però no s\'ha pogut desar la sol·licitud al teu panell. Si us plau, contacta\'ns.',
+          });
+      }
+    } else {
+        // If no user, just show success for Formspree
         toast({
             title: 'Sol·licitud Enviada!',
-            description: 'Hem rebut la teva sol·licitud. Pots veure el seu estat al teu panell de gestió.',
+            description: 'Hem rebut la teva sol·licitud. Ens posarem en contacte amb tu aviat.',
             variant: 'default',
         });
         form.reset();
         setSuggestions(null);
-    } catch (error) {
-        console.error("Error saving service request: ", error);
-        toast({
-            variant: 'destructive',
-            title: 'Error en desar',
-            description: 'No s\'ha pogut desar la sol·licitud. Si us plau, torna a intentar-ho.',
-        });
     }
   }
   
