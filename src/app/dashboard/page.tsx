@@ -11,7 +11,9 @@ import { ServiceRequest } from '@/lib/service-requests';
 import { Loader2 } from 'lucide-react';
 import { useMemo } from 'react';
 
+// Helper to avoid React strict mode issues with Firebase hooks.
 function useMemoFirebase(creator: () => any, deps: any[]) {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     return useMemo(creator, deps);
 }
 
@@ -28,7 +30,7 @@ export default function DashboardPage() {
     }, [firestore, user]);
 
     const { data: quoteRequests, isLoading: isQuotesLoading } = useCollection<ServiceRequest>(quoteRequestsQuery);
-
+    
     if (isUserLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
