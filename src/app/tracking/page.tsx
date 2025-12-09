@@ -10,7 +10,7 @@ import { Progress } from '@/components/ui/progress';
 
 // Interfície de dades que esperem de l'API de SheetDB
 interface ShippingInfo {
-  code: string;
+  tracking_code: string;
   client: string;
   origin: string;
   destination: string;
@@ -31,14 +31,14 @@ const statusConfig = {
 const statusOrder: ShippingInfo['status'][] = ['En magatzem', 'En trànsit', 'Duanes', 'Lliurat'];
 
 export default function TrackingPage() {
-  const [code, setCode] = useState('');
+  const [trackingCode, setTrackingCode] = useState('');
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo | null>(null);
   const [searchState, setSearchState] = useState<SearchState>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSearch = async (event: FormEvent) => {
     event.preventDefault();
-    if (!code.trim()) return;
+    if (!trackingCode.trim()) return;
 
     // Reset i estat de càrrega
     setSearchState('loading');
@@ -46,10 +46,10 @@ export default function TrackingPage() {
     setErrorMessage('');
 
     // Depuració: Log del codi cercat
-    console.log("Cercant codi:", code);
+    console.log("Cercant codi:", trackingCode);
 
     try {
-      const apiUrl = `https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?code=${code}`;
+      const apiUrl = `https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`;
       const response = await fetch(apiUrl);
       
       if (!response.ok) {
@@ -124,7 +124,7 @@ export default function TrackingPage() {
           <Card className="max-w-4xl mx-auto shadow-lg">
             <CardHeader>
               <CardTitle className="flex justify-between items-start">
-                <span>Enviament: {shippingInfo.code}</span>
+                <span>Enviament: {shippingInfo.tracking_code}</span>
                 <span className={`text-sm font-medium px-3 py-1 rounded-full ${currentStatus.color} text-white`}>{shippingInfo.status}</span>
               </CardTitle>
               <CardDescription>Informació detallada del teu enviament.</CardDescription>
@@ -189,13 +189,13 @@ export default function TrackingPage() {
         <form onSubmit={handleSearch} className="flex items-center gap-2">
           <Input
             type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
+            value={trackingCode}
+            onChange={(e) => setTrackingCode(e.target.value)}
             placeholder="Ex: EJA123456"
             className="flex-grow text-base"
             disabled={searchState === 'loading'}
           />
-          <Button type="submit" size="lg" disabled={searchState === 'loading' || !code}>
+          <Button type="submit" size="lg" disabled={searchState === 'loading' || !trackingCode}>
             {searchState === 'loading' ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
