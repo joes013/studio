@@ -64,12 +64,10 @@ export default function TrackingPage() {
 
     try {
       const response = await fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`);
-      if (!response.ok) {
-        throw new Error('No s\'ha pogut contactar amb el servidor de seguiment.');
-      }
+      
       const data: ShippingInfo[] = await response.json();
 
-      if (data.length > 0) {
+      if (response.ok && data.length > 0) {
         setShippingInfo(data[0]);
         setSearchState('found');
       } else {
@@ -135,7 +133,7 @@ export default function TrackingPage() {
                         {currentStatusInfo.icon}
                         <h3 className="text-xl sm:text-2xl font-bold font-headline">Estat: {shippingInfo.status}</h3>
                     </div>
-                  <Progress value={currentStatusInfo.progress} className={cn("h-3", currentStatusInfo.color)} />
+                  <Progress value={currentStatusInfo.progress} className={cn("h-3")} />
                 </div>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
