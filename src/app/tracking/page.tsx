@@ -8,7 +8,6 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, Search, AlertCircle, Warehouse, Truck, CheckCircle2, ShieldCheck, MapPin, Calendar, User } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
-// Interfície de dades que esperem de l'API de SheetDB
 interface ShippingInfo {
   tracking_code: string;
   client: string;
@@ -21,14 +20,14 @@ interface ShippingInfo {
 
 type SearchState = 'idle' | 'loading' | 'error' | 'found' | 'not_found';
 
-// Configuració dels estats per a la barra de progrés i la línia de temps
 const statusConfig = {
   'En magatzem': { progress: 10, color: 'bg-yellow-500' },
   'En trànsit': { progress: 50, color: 'bg-blue-500' },
   'Duanes': { progress: 75, color: 'bg-orange-500' },
   'Lliurat': { progress: 100, color: 'bg-green-500' },
+  'Desconegut': { progress: 0, color: 'bg-gray-400' },
 };
-const statusOrder: ShippingInfo['status'][] = ['En magatzem', 'En trànsit', 'Duanes', 'Lliurat'];
+const statusOrder: (keyof typeof statusConfig)[] = ['En magatzem', 'En trànsit', 'Duanes', 'Lliurat'];
 
 export default function TrackingPage() {
   const [trackingCode, setTrackingCode] = useState('');
@@ -40,12 +39,10 @@ export default function TrackingPage() {
     event.preventDefault();
     if (!trackingCode.trim()) return;
 
-    // Reset i estat de càrrega
     setSearchState('loading');
     setShippingInfo(null);
     setErrorMessage('');
 
-    // Depuració: Log del codi cercat
     console.log("Cercant codi:", trackingCode);
 
     try {
@@ -53,7 +50,6 @@ export default function TrackingPage() {
       const response = await fetch(apiUrl);
       
       if (!response.ok) {
-        // En lloc de llançar un error, actualitzem l'estat
         setErrorMessage('Error de xarxa o de servidor. Si us plau, intenta-ho de nou més tard.');
         setSearchState('error');
         return; 
@@ -61,7 +57,6 @@ export default function TrackingPage() {
 
       const data: ShippingInfo[] = await response.json();
       
-      // Depuració: Log de les dades rebudes
       console.log("Dades rebudes:", data);
 
       if (data.length > 0) {
@@ -77,9 +72,12 @@ export default function TrackingPage() {
     }
   };
 
-  const renderTimelineNode = (status: ShippingInfo['status'], icon: React.ReactNode, index: number) => {
+  const renderTimelineNode = (status: keyof typeof statusConfig, icon: React.ReactNode, index: number) => {
     if (!shippingInfo) return null;
-    const currentStatusIndex = statusOrder.indexOf(shippingInfo.status);
+
+    const currentStatusKey = (shippingInfo.status in statusConfig) ? shippingInfo.status : 'Desconegut';
+    const currentStatusIndex = statusOrder.indexOf(currentStatusKey);
+    
     const isActive = currentStatusIndex >= index;
     const isCurrent = currentStatusIndex === index;
 
@@ -119,7 +117,10 @@ export default function TrackingPage() {
         );
       case 'found':
         if (!shippingInfo) return null;
-        const currentStatus = statusConfig[shippingInfo.status];
+        
+        const currentStatusKey = (shippingInfo.status in statusConfig) ? shippingInfo.status : 'Desconegut';
+        const currentStatus = statusConfig[currentStatusKey];
+        
         return (
           <Card className="max-w-4xl mx-auto shadow-lg">
             <CardHeader>
@@ -172,7 +173,7 @@ export default function TrackingPage() {
         );
       case 'idle':
       default:
-        return null; // No mostrar res si no s'ha iniciat la cerca
+        return null;
     }
   };
 
