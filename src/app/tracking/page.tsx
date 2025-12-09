@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, FormEvent } from 'react';
@@ -7,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Search, Loader2, PackageX, MapPin, Calendar, Warehouse, Truck, CheckCircle2, User } from 'lucide-react';
+import { Search, Loader2, PackageX, MapPin, Warehouse, Truck, CheckCircle2, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type ShippingStatus = 'En magatzem' | 'En trànsit' | 'Lliurat';
@@ -24,20 +23,10 @@ interface ShippingInfo {
 
 type SearchState = 'idle' | 'loading' | 'error' | 'found';
 
-const statusConfig: Record<ShippingStatus, { progress: number; color: string; icon: React.ReactNode }> = {
-  'En magatzem': { progress: 10, color: 'bg-yellow-500', icon: <Warehouse className="h-5 w-5" /> },
-  'En trànsit': { progress: 50, color: 'bg-blue-500', icon: <Truck className="h-5 w-5" /> },
-  'Lliurat': { progress: 100, color: 'bg-green-500', icon: <CheckCircle2 className="h-5 w-5" /> },
-};
-
-const mockData: ShippingInfo = {
-    tracking_code: 'EJA123456',
-    client: 'Empresa d\'Exemple S.L.',
-    origin: 'Polígon Industrial Constantí, Tarragona',
-    destination: 'Carrer de la Indústria, 123, Barcelona',
-    eta: new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString('ca-ES'),
-    status: 'En trànsit',
-    location: 'AP-7, a l\'alçada de Vilafranca del Penedès',
+const statusConfig: Record<ShippingStatus, { progress: number; icon: React.ReactNode }> = {
+  'En magatzem': { progress: 10, icon: <Warehouse className="h-5 w-5" /> },
+  'En trànsit': { progress: 50, icon: <Truck className="h-5 w-5" /> },
+  'Lliurat': { progress: 100, icon: <CheckCircle2 className="h-5 w-5" /> },
 };
 
 
@@ -47,7 +36,7 @@ export default function TrackingPage() {
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = (e: FormEvent) => {
+  const handleSearch = async (e: FormEvent) => {
     e.preventDefault();
     if (!trackingCode) return;
 
@@ -55,34 +44,26 @@ export default function TrackingPage() {
     setError(null);
     setShippingInfo(null);
     
-    setTimeout(() => {
-        if (trackingCode.toUpperCase() === 'EJA123456') {
-            setShippingInfo(mockData);
-            setSearchState('found');
-            return;
+    try {
+        const response = await fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`);
+        if (!response.ok) {
+            throw new Error('La resposta de la xarxa no ha estat correcta.');
         }
-
-        fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data: ShippingInfo[]) => {
-                if (data.length > 0) {
-                    setShippingInfo(data[0]);
-                    setSearchState('found');
-                } else {
-                    setError(`El codi de seguiment '${trackingCode}' no s'ha trobat.`);
-                    setSearchState('error');
-                }
-            })
-            .catch(() => {
-                setError('Hi ha hagut un problema amb la connexió. Si us plau, intenta-ho de nou més tard.');
-                setSearchState('error');
-            });
-    }, 500);
+        
+        const data: ShippingInfo[] = await response.json();
+        
+        if (data && data.length > 0) {
+            setShippingInfo(data[0]);
+            setSearchState('found');
+        } else {
+            setError(`El codi de seguiment '${trackingCode}' no s'ha trobat.`);
+            setSearchState('error');
+        }
+    } catch (err) {
+        console.error(err);
+        setError('Hi ha hagut un problema amb la connexió. Si us plau, intenta-ho de nou més tard.');
+        setSearchState('error');
+    }
   };
 
   const currentStatusInfo = shippingInfo ? statusConfig[shippingInfo.status] : null;
@@ -187,7 +168,3 @@ export default function TrackingPage() {
     </div>
   );
 }
-
-    
-
-    
