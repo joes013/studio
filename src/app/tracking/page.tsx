@@ -10,7 +10,7 @@ import { Progress } from '@/components/ui/progress';
 
 // Interfície de dades que esperem de l'API de SheetDB
 interface ShippingInfo {
-  code: string; // Columna 'code' segons les instruccions
+  code: string;
   client: string;
   origin: string;
   destination: string;
@@ -53,7 +53,10 @@ export default function TrackingPage() {
       const response = await fetch(apiUrl);
       
       if (!response.ok) {
-        throw new Error('Error de xarxa o de servidor.');
+        // En lloc de llançar un error, actualitzem l'estat
+        setErrorMessage('Error de xarxa o de servidor. Si us plau, intenta-ho de nou més tard.');
+        setSearchState('error');
+        return; 
       }
 
       const data: ShippingInfo[] = await response.json();
