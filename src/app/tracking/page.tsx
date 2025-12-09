@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, Search, AlertCircle, Warehouse, Truck, CheckCircle2 } from 'lucide-react';
+import { Loader2, Search, AlertCircle, Warehouse, Truck, CheckCircle2, ShieldCheck, MapPin, Calendar, User } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 interface ShippingInfo {
@@ -13,7 +13,7 @@ interface ShippingInfo {
   client: string;
   origin: string;
   destination: string;
-  status: 'En magatzem' | 'En trànsit' | 'Lliurat';
+  status: 'En magatzem' | 'En trànsit' | 'Duanes' | 'Lliurat';
   location: string;
   eta: string;
 }
@@ -23,8 +23,12 @@ type SearchState = 'idle' | 'loading' | 'error' | 'found';
 const statusConfig = {
   'En magatzem': { progress: 10, color: 'bg-yellow-500' },
   'En trànsit': { progress: 50, color: 'bg-blue-500' },
+  'Duanes': { progress: 75, color: 'bg-orange-500' },
   'Lliurat': { progress: 100, color: 'bg-green-500' },
 };
+
+const statusOrder: ShippingInfo['status'][] = ['En magatzem', 'En trànsit', 'Duanes', 'Lliurat'];
+
 
 export default function TrackingPage() {
   const [trackingCode, setTrackingCode] = useState('');
@@ -63,6 +67,22 @@ export default function TrackingPage() {
   };
   
   const currentStatusConfig = shippingInfo ? statusConfig[shippingInfo.status] : null;
+  const currentStatusIndex = shippingInfo ? statusOrder.indexOf(shippingInfo.status) : -1;
+  
+
+  const renderTimelineNode = (status: ShippingInfo['status'], icon: React.ReactNode, index: number) => {
+    const isActive = currentStatusIndex >= index;
+    const isCurrent = currentStatusIndex === index;
+
+    return (
+      <div className={`flex flex-col items-center ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+        <div className={`h-10 w-10 rounded-full flex items-center justify-center border-2 ${isCurrent ? 'bg-primary text-primary-foreground border-primary' : 'bg-background'}`}>
+          {icon}
+        </div>
+        <span className={`mt-2 text-xs text-center ${isCurrent ? 'font-bold' : ''}`}>{status}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-16 sm:py-24">
@@ -109,50 +129,51 @@ export default function TrackingPage() {
           </Alert>
         )}
 
-        {searchState === 'found' && shippingInfo && (
+        {searchState === 'found' && shippingInfo && currentStatusConfig && (
           <Card className="max-w-4xl mx-auto shadow-lg">
             <CardHeader>
-              <CardTitle className="flex justify-between items-center">
-                <span>Resultats per: {shippingInfo.tracking_code}</span>
-                <span className="text-sm font-medium px-3 py-1 rounded-full bg-secondary text-secondary-foreground">{shippingInfo.status}</span>
+              <CardTitle className="flex justify-between items-start">
+                <span>Enviament: {shippingInfo.tracking_code}</span>
+                <span className={`text-sm font-medium px-3 py-1 rounded-full ${currentStatusConfig.color} text-white`}>{shippingInfo.status}</span>
               </CardTitle>
+              <CardDescription>Informació detallada del teu enviament.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-8">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Progrés de l'enviament</h3>
-                <Progress value={currentStatusConfig?.progress} className={`h-3 ${currentStatusConfig?.color}`} />
-                <div className="mt-4 grid grid-cols-3 gap-4 text-center text-sm">
-                  <div className={`flex flex-col items-center ${shippingInfo.status === 'En magatzem' || shippingInfo.status === 'En trànsit' || shippingInfo.status === 'Lliurat' ? 'text-primary' : 'text-muted-foreground'}`}>
-                    <Warehouse className="h-6 w-6 mb-1" />
-                    <span>En magatzem</span>
+               <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Progrés</h3>
+                  <Progress value={currentStatusConfig.progress} className={`h-2 ${currentStatusConfig.color}`} />
+                  <div className="grid grid-cols-4 gap-2 relative items-start">
+                    <div className="absolute top-5 left-0 w-full h-0.5 bg-border -z-10"/>
+                    {renderTimelineNode('En magatzem', <Warehouse className="h-5 w-5" />, 0)}
+                    {renderTimelineNode('En trànsit', <Truck className="h-5 w-5" />, 1)}
+                    {renderTimelineNode('Duanes', <ShieldCheck className="h-5 w-5" />, 2)}
+                    {renderTimelineNode('Lliurat', <CheckCircle2 className="h-5 w-5" />, 3)}
                   </div>
-                   <div className={`flex flex-col items-center ${shippingInfo.status === 'En trànsit' || shippingInfo.status === 'Lliurat' ? 'text-primary' : 'text-muted-foreground'}`}>
-                    <Truck className="h-6 w-6 mb-1" />
-                    <span>En trànsit</span>
-                  </div>
-                   <div className={`flex flex-col items-center ${shippingInfo.status === 'Lliurat' ? 'text-green-600' : 'text-muted-foreground'}`}>
-                    <CheckCircle2 className="h-6 w-6 mb-1" />
-                    <span>Lliurat</span>
-                  </div>
+              </div>
+
+              <div className="border-t pt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-sm">
+                <div className="space-y-1">
+                  <p className="text-muted-foreground flex items-center gap-2"><User className="h-4 w-4" /> Client</p>
+                  <p className="font-semibold text-base">{shippingInfo.client}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-muted-foreground flex items-center gap-2"><MapPin className="h-4 w-4" /> Ubicació Actual</p>
+                  <p className="font-semibold text-base">{shippingInfo.location}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-muted-foreground flex items-center gap-2"><Calendar className="h-4 w-4" /> Data Prevista (ETA)</p>
+                  <p className="font-semibold text-base">{shippingInfo.eta}</p>
                 </div>
               </div>
 
-              <div className="border-t pt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
-                <div className="space-y-1">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                 <div className="bg-muted/50 p-4 rounded-lg">
                   <p className="text-muted-foreground">Origen</p>
                   <p className="font-semibold">{shippingInfo.origin}</p>
                 </div>
-                <div className="space-y-1">
+                <div className="bg-muted/50 p-4 rounded-lg">
                   <p className="text-muted-foreground">Destí</p>
                   <p className="font-semibold">{shippingInfo.destination}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">Ubicació Actual</p>
-                  <p className="font-semibold">{shippingInfo.location}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-muted-foreground">Data Prevista (ETA)</p>
-                  <p className="font-semibold">{shippingInfo.eta}</p>
                 </div>
               </div>
             </CardContent>
