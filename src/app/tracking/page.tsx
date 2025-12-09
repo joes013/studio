@@ -44,7 +44,7 @@ export default function TrackingPage() {
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = async (e: FormEvent) => {
+  const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     if (!trackingCode) return;
 
@@ -53,31 +53,31 @@ export default function TrackingPage() {
     setShippingInfo(null);
     
     // Simula una petita espera per millorar l'experiència d'usuari
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Dades de prova
-    if (trackingCode.toUpperCase() === 'EJA123456') {
-        setShippingInfo(mockData);
-        setSearchState('found');
-        return;
-    }
+    setTimeout(() => {
+        // Dades de prova
+        if (trackingCode.toUpperCase() === 'EJA123456') {
+            setShippingInfo(mockData);
+            setSearchState('found');
+            return;
+        }
 
-    try {
-      const response = await fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`);
-      
-      const data: ShippingInfo[] = await response.json();
-
-      if (response.ok && data.length > 0) {
-        setShippingInfo(data[0]);
-        setSearchState('found');
-      } else {
-        setError(`El codi de seguiment '${trackingCode}' no s'ha trobat.`);
-        setSearchState('error');
-      }
-    } catch (err) {
-      setError('Hi ha hagut un problema amb la connexió. Si us plau, intenta-ho de nou més tard.');
-      setSearchState('error');
-    }
+        // Crida a l'API real
+        fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`)
+            .then(response => response.json())
+            .then((data: ShippingInfo[]) => {
+                if (data.length > 0) {
+                    setShippingInfo(data[0]);
+                    setSearchState('found');
+                } else {
+                    setError(`El codi de seguiment '${trackingCode}' no s'ha trobat.`);
+                    setSearchState('error');
+                }
+            })
+            .catch(() => {
+                setError('Hi ha hagut un problema amb la connexió. Si us plau, intenta-ho de nou més tard.');
+                setSearchState('error');
+            });
+    }, 500);
   };
 
   const currentStatusInfo = shippingInfo ? statusConfig[shippingInfo.status] : null;
