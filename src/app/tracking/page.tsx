@@ -63,7 +63,12 @@ export default function TrackingPage() {
 
         // Crida a l'API real
         fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then((data: ShippingInfo[]) => {
                 if (data.length > 0) {
                     setShippingInfo(data[0]);
