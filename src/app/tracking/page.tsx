@@ -4,113 +4,157 @@ import { useState, FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Search, Loader2, PackageCheck, PackageX, Truck } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Search, Loader2, PackageX, MapPin, Calendar, Warehouse, Truck, CheckCircle2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-type TrackingStatus = 'idle' | 'loading' | 'found' | 'not_found';
+type ShippingStatus = 'En magatzem' | 'En trànsit' | 'Lliurat';
 
-const trackingHistory = [
-  { status: 'Lliurat', location: 'Client Final, Madrid', date: '2024-05-22 13:45' },
-  { status: 'En repartiment', location: 'Destí, Madrid', date: '2024-05-22 09:00' },
-  { status: 'En trànsit', location: 'Centre logístic, Madrid', date: '2024-05-21 15:00' },
-  { status: 'En trànsit', location: 'Centre logístic, Saragossa', date: '2024-05-21 02:30' },
-  { status: 'Recollit', location: 'Magatzem Origen, Tarragona', date: '2024-05-20 10:00' },
-];
+interface ShippingInfo {
+  tracking_code: string;
+  origen: string;
+  desti: string;
+  eta: string;
+  status: ShippingStatus;
+  ubicacio_actual: string;
+}
+
+type SearchState = 'idle' | 'loading' | 'error' | 'found';
+
+const statusConfig: Record<ShippingStatus, { progress: number; color: string; icon: React.ReactNode }> = {
+  'En magatzem': { progress: 10, color: 'bg-yellow-500', icon: <Warehouse className="h-5 w-5" /> },
+  'En trànsit': { progress: 50, color: 'bg-blue-500', icon: <Truck className="h-5 w-5" /> },
+  'Lliurat': { progress: 100, color: 'bg-green-500', icon: <CheckCircle2 className="h-5 w-5" /> },
+};
 
 export default function TrackingPage() {
-  const [trackingNumber, setTrackingNumber] = useState('');
-  const [status, setStatus] = useState<TrackingStatus>('idle');
+  const [trackingCode, setTrackingCode] = useState('');
+  const [searchState, setSearchState] = useState<SearchState>('idle');
+  const [shippingInfo, setShippingInfo] = useState<ShippingInfo | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleTrack = (e: FormEvent) => {
+  const handleSearch = async (e: FormEvent) => {
     e.preventDefault();
-    if (!trackingNumber) return;
+    if (!trackingCode) return;
 
-    setStatus('loading');
-    setTimeout(() => {
-      if (trackingNumber.toUpperCase() === 'EJA123456') {
-        setStatus('found');
-      } else {
-        setStatus('not_found');
+    setSearchState('loading');
+    setError(null);
+    setShippingInfo(null);
+
+    try {
+      const response = await fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`);
+      if (!response.ok) {
+        throw new Error('No s\'ha pogut contactar amb el servidor de seguiment.');
       }
-    }, 1500);
-  };
+      const data: ShippingInfo[] = await response.json();
 
-  const renderStatus = () => {
-    switch (status) {
-      case 'loading':
-        return (
-          <div className="flex flex-col items-center justify-center text-center p-8">
-            <Loader2 className="h-12 w-12 animate-spin text-accent" />
-            <p className="mt-4 text-lg font-medium">Buscant el teu enviament...</p>
-          </div>
-        );
-      case 'found':
-        return (
-            <div className="p-6 w-full">
-                <h3 className="text-xl font-semibold mb-6">Historial de l'enviament: <span className="font-mono text-primary">{trackingNumber.toUpperCase()}</span></h3>
-                <div className="relative pl-6">
-                    <div className="absolute left-10 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2"></div>
-                    {trackingHistory.map((item, index) => (
-                        <div key={index} className="flex items-start gap-4 mb-8">
-                            <div className={`z-10 flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center bg-background border-2 ${index === 0 ? 'border-accent text-accent' : 'border-primary text-primary'}`}>
-                                <Truck size={16} />
-                            </div>
-                            <div>
-                                <p className="font-semibold">{item.status}</p>
-                                <p className="text-sm text-foreground/80">{item.location}</p>
-                                <p className="text-xs text-foreground/60">{item.date}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-      case 'not_found':
-        return (
-          <div className="flex flex-col items-center justify-center text-center p-8">
-            <PackageX className="h-12 w-12 text-destructive" />
-            <p className="mt-4 text-lg font-medium">No s'ha trobat l'enviament</p>
-            <p className="text-foreground/80">El número de seguiment '{trackingNumber}' no és correcte. Si us plau, comprova-ho.</p>
-          </div>
-        );
-      case 'idle':
-      default:
-        return (
-          <div className="flex flex-col items-center justify-center text-center p-8">
-            <PackageCheck className="h-12 w-12 text-primary" />
-            <p className="mt-4 text-lg font-medium">Introdueix el teu número de seguiment</p>
-            <p className="text-foreground/80">Pots provar amb el número de mostra: <code className="font-mono bg-primary/10 px-2 py-1 rounded">EJA123456</code>.</p>
-          </div>
-        );
+      if (data.length > 0) {
+        setShippingInfo(data[0]);
+        setSearchState('found');
+      } else {
+        setError(`El codi de seguiment '${trackingCode}' no s'ha trobat.`);
+        setSearchState('error');
+      }
+    } catch (err) {
+      setError('Hi ha hagut un problema amb la connexió. Si us plau, intenta-ho de nou més tard.');
+      setSearchState('error');
     }
   };
+
+  const currentStatusInfo = shippingInfo ? statusConfig[shippingInfo.status] : null;
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-16 sm:py-24">
       <Card className="w-full shadow-lg">
         <CardHeader>
-          <CardTitle className="text-3xl font-headline">Seguiment en Temps Real</CardTitle>
-          <CardDescription>Introdueix el teu número de seguiment per conèixer l'estat del teu enviament.</CardDescription>
+          <CardTitle className="text-3xl font-headline">Localitza el teu enviament</CardTitle>
+          <CardDescription>Introdueix el codi de seguiment per veure l'estat en temps real.</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleTrack} className="flex flex-col sm:flex-row gap-4">
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
             <Input
               type="text"
               placeholder="Ex: EJA123456"
-              value={trackingNumber}
-              onChange={(e) => setTrackingNumber(e.target.value)}
+              value={trackingCode}
+              onChange={(e) => setTrackingCode(e.target.value)}
               className="text-base h-12"
+              aria-label="Codi de seguiment"
             />
-            <Button type="submit" size="lg" disabled={status === 'loading' || !trackingNumber} className="h-12">
-              {status === 'loading' ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Button type="submit" size="lg" disabled={searchState === 'loading' || !trackingCode} className="h-12">
+              {searchState === 'loading' ? (
+                <Loader2 className="mr-2" />
               ) : (
-                <Search className="mr-2 h-4 w-4" />
+                <Search className="mr-2" />
               )}
-              Rastrejar
+              Cercar
             </Button>
           </form>
-          <div className="mt-8 border-t pt-8 min-h-[200px] flex items-center justify-center bg-primary/5 rounded-b-lg">
-            {renderStatus()}
+
+          <div className="mt-8 border-t pt-8 min-h-[250px] flex items-center justify-center bg-primary/5 rounded-b-lg">
+            {searchState === 'loading' && (
+              <div className="text-center">
+                <Loader2 className="h-12 w-12 animate-spin text-accent mx-auto" />
+                <p className="mt-4 text-lg font-medium">Buscant...</p>
+              </div>
+            )}
+            {searchState === 'idle' && (
+                <p className="text-foreground/70">Introdueix un codi per començar el seguiment.</p>
+            )}
+            {searchState === 'error' && error && (
+                <Alert variant="destructive" className="max-w-md">
+                    <PackageX className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            )}
+            {searchState === 'found' && shippingInfo && currentStatusInfo && (
+              <div className="w-full p-2 sm:p-6">
+                <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-2">
+                        {currentStatusInfo.icon}
+                        <h3 className="text-xl sm:text-2xl font-bold font-headline">Estat: {shippingInfo.status}</h3>
+                    </div>
+                  <Progress value={currentStatusInfo.progress} className={cn("h-3", currentStatusInfo.color)} />
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+                    <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                            <MapPin className="text-primary mt-1" />
+                            <div>
+                                <p className="font-semibold text-primary">Origen</p>
+                                <p className="text-foreground/80">{shippingInfo.origen}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <MapPin className="text-accent mt-1" />
+                            <div>
+                                <p className="font-semibold text-accent">Destí</p>
+                                <p className="text-foreground/80">{shippingInfo.desti}</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                            <Calendar className="text-primary mt-1" />
+                            <div>
+                                <p className="font-semibold text-primary">Data prevista (ETA)</p>
+                                <p className="text-foreground/80">{shippingInfo.eta}</p>
+                            </div>
+                        </div>
+                         <div className="flex items-start gap-3">
+                            <Truck className="text-accent mt-1" />
+                            <div>
+                                <p className="font-semibold text-accent">Ubicació Actual</p>
+                                <p className="text-foreground/80">{shippingInfo.ubicacio_actual}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
