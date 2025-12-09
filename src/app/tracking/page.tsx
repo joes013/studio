@@ -13,21 +13,23 @@ interface ShippingInfo {
   client: string;
   origin: string;
   destination: string;
-  status: 'En magatzem' | 'En trànsit' | 'Duanes' | 'Lliurat';
+  status: 'En magatzem' | 'EN TRANSIT' | 'DUANES' | 'LLIURAT';
   location: string;
   eta: string;
 }
 
 type SearchState = 'idle' | 'loading' | 'error' | 'found' | 'not_found';
 
-const statusConfig = {
-  'En magatzem': { progress: 10, color: 'bg-yellow-500' },
-  'En trànsit': { progress: 50, color: 'bg-blue-500' },
-  'Duanes': { progress: 75, color: 'bg-orange-500' },
-  'Lliurat': { progress: 100, color: 'bg-green-500' },
-  'Desconegut': { progress: 0, color: 'bg-gray-400' },
+type StatusKey = 'En magatzem' | 'EN TRANSIT' | 'DUANES' | 'LLIURAT' | 'Desconegut';
+
+const statusConfig: Record<StatusKey, { progress: number; color: string; icon: React.ReactNode }> = {
+  'En magatzem': { progress: 10, color: 'bg-yellow-500', icon: <Warehouse className="h-5 w-5" /> },
+  'EN TRANSIT': { progress: 50, color: 'bg-blue-500', icon: <Truck className="h-5 w-5" /> },
+  'DUANES': { progress: 75, color: 'bg-orange-500', icon: <ShieldCheck className="h-5 w-5" /> },
+  'LLIURAT': { progress: 100, color: 'bg-green-500', icon: <CheckCircle2 className="h-5 w-5" /> },
+  'Desconegut': { progress: 0, color: 'bg-gray-400', icon: <AlertCircle className="h-5 w-5" /> },
 };
-const statusOrder: (keyof typeof statusConfig)[] = ['En magatzem', 'En trànsit', 'Duanes', 'Lliurat'];
+const statusOrder: StatusKey[] = ['En magatzem', 'EN TRANSIT', 'DUANES', 'LLIURAT'];
 
 export default function TrackingPage() {
   const [trackingCode, setTrackingCode] = useState('');
@@ -72,10 +74,11 @@ export default function TrackingPage() {
     }
   };
 
-  const renderTimelineNode = (status: keyof typeof statusConfig, icon: React.ReactNode, index: number) => {
+  const renderTimelineNode = (status: StatusKey, index: number) => {
     if (!shippingInfo) return null;
 
-    const currentStatusKey = (shippingInfo.status in statusConfig) ? shippingInfo.status : 'Desconegut';
+    const receivedStatus = shippingInfo.status?.toUpperCase().trim() as StatusKey;
+    const currentStatusKey = statusOrder.includes(receivedStatus) ? receivedStatus : 'Desconegut';
     const currentStatusIndex = statusOrder.indexOf(currentStatusKey);
     
     const isActive = currentStatusIndex >= index;
@@ -84,7 +87,7 @@ export default function TrackingPage() {
     return (
       <div className={`flex flex-col items-center ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
         <div className={`h-10 w-10 rounded-full flex items-center justify-center border-2 ${isCurrent ? 'bg-primary text-primary-foreground border-primary' : 'bg-background'}`}>
-          {icon}
+          {statusConfig[status].icon}
         </div>
         <span className={`mt-2 text-xs text-center ${isCurrent ? 'font-bold' : ''}`}>{status}</span>
       </div>
@@ -118,7 +121,8 @@ export default function TrackingPage() {
       case 'found':
         if (!shippingInfo) return null;
         
-        const currentStatusKey = (shippingInfo.status in statusConfig) ? shippingInfo.status : 'Desconegut';
+        const receivedStatus = shippingInfo.status?.toUpperCase().trim() as StatusKey;
+        const currentStatusKey : StatusKey = statusOrder.includes(receivedStatus) ? receivedStatus : 'Desconegut';
         const currentStatus = statusConfig[currentStatusKey];
         
         return (
@@ -134,12 +138,9 @@ export default function TrackingPage() {
                <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Progrés</h3>
                   <Progress value={currentStatus.progress} className={`h-2 ${currentStatus.color}`} />
-                  <div className="grid grid-cols-4 gap-2 relative items-start">
-                    <div className="absolute top-5 left-0 w-full h-0.5 bg-border -z-10"/>
-                    {renderTimelineNode('En magatzem', <Warehouse className="h-5 w-5" />, 0)}
-                    {renderTimelineNode('En trànsit', <Truck className="h-5 w-5" />, 1)}
-                    {renderTimelineNode('Duanes', <ShieldCheck className="h-5 w-5" />, 2)}
-                    {renderTimelineNode('Lliurat', <CheckCircle2 className="h-5 w-5" />, 3)}
+                  <div className="grid grid-cols-4 gap-2 relative items-start pt-2">
+                    <div className="absolute top-7 left-0 w-full h-0.5 bg-border -z-10"/>
+                    {statusOrder.map((status, index) => renderTimelineNode(status, index))}
                   </div>
               </div>
 
