@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, FormEvent } from 'react';
@@ -6,18 +7,19 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Search, Loader2, PackageX, MapPin, Calendar, Warehouse, Truck, CheckCircle2 } from 'lucide-react';
+import { Search, Loader2, PackageX, MapPin, Calendar, Warehouse, Truck, CheckCircle2, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type ShippingStatus = 'En magatzem' | 'En trànsit' | 'Lliurat';
 
 interface ShippingInfo {
   tracking_code: string;
-  origen: string;
-  desti: string;
+  client: string;
+  origin: string;
+  destination: string;
   eta: string;
   status: ShippingStatus;
-  ubicacio_actual: string;
+  location: string;
 }
 
 type SearchState = 'idle' | 'loading' | 'error' | 'found';
@@ -30,11 +32,12 @@ const statusConfig: Record<ShippingStatus, { progress: number; color: string; ic
 
 const mockData: ShippingInfo = {
     tracking_code: 'EJA123456',
-    origen: 'Polígon Industrial Constantí, Tarragona',
-    desti: 'Carrer de la Indústria, 123, Barcelona',
+    client: 'Empresa d\'Exemple S.L.',
+    origin: 'Polígon Industrial Constantí, Tarragona',
+    destination: 'Carrer de la Indústria, 123, Barcelona',
     eta: new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString('ca-ES'),
     status: 'En trànsit',
-    ubicacio_actual: 'AP-7, a l\'alçada de Vilafranca del Penedès',
+    location: 'AP-7, a l\'alçada de Vilafranca del Penedès',
 };
 
 
@@ -52,16 +55,13 @@ export default function TrackingPage() {
     setError(null);
     setShippingInfo(null);
     
-    // Simula una petita espera per millorar l'experiència d'usuari
     setTimeout(() => {
-        // Dades de prova
         if (trackingCode.toUpperCase() === 'EJA123456') {
             setShippingInfo(mockData);
             setSearchState('found');
             return;
         }
 
-        // Crida a l'API real
         fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`)
             .then(response => {
                 if (!response.ok) {
@@ -115,14 +115,14 @@ export default function TrackingPage() {
           </form>
 
           <div className="mt-8 border-t pt-8 min-h-[250px] flex items-center justify-center bg-primary/5 rounded-b-lg">
+            {searchState === 'idle' && (
+                <p className="text-foreground/70">Introdueix un codi per començar el seguiment.</p>
+            )}
             {searchState === 'loading' && (
               <div className="text-center">
                 <Loader2 className="h-12 w-12 animate-spin text-accent mx-auto" />
                 <p className="mt-4 text-lg font-medium">Buscant...</p>
               </div>
-            )}
-            {searchState === 'idle' && (
-                <p className="text-foreground/70">Introdueix un codi per començar el seguiment.</p>
             )}
             {searchState === 'error' && error && (
                 <Alert variant="destructive" className="max-w-md">
@@ -133,7 +133,7 @@ export default function TrackingPage() {
             )}
             {searchState === 'found' && shippingInfo && currentStatusInfo && (
               <div className="w-full p-2 sm:p-6">
-                <div className="mb-6">
+                <div className="mb-8">
                     <div className="flex items-center gap-3 mb-2">
                         {currentStatusInfo.icon}
                         <h3 className="text-xl sm:text-2xl font-bold font-headline">Estat: {shippingInfo.status}</h3>
@@ -144,37 +144,40 @@ export default function TrackingPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
                     <div className="space-y-4">
                         <div className="flex items-start gap-3">
-                            <MapPin className="text-primary mt-1" />
+                            <User className="text-primary mt-1" />
                             <div>
-                                <p className="font-semibold text-primary">Origen</p>
-                                <p className="text-foreground/80">{shippingInfo.origen}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-start gap-3">
-                            <MapPin className="text-accent mt-1" />
-                            <div>
-                                <p className="font-semibold text-accent">Destí</p>
-                                <p className="text-foreground/80">{shippingInfo.desti}</p>
-                            </div>
-                        </div>
-                    </div>
-                     <div className="space-y-4">
-                        <div className="flex items-start gap-3">
-                            <Calendar className="text-primary mt-1" />
-                            <div>
-                                <p className="font-semibold text-primary">Data prevista (ETA)</p>
-                                <p className="text-foreground/80">{shippingInfo.eta}</p>
+                                <p className="font-semibold text-primary">Client</p>
+                                <p className="text-foreground/80">{shippingInfo.client}</p>
                             </div>
                         </div>
                          <div className="flex items-start gap-3">
                             <Truck className="text-accent mt-1" />
                             <div>
                                 <p className="font-semibold text-accent">Ubicació Actual</p>
-                                <p className="text-foreground/80">{shippingInfo.ubicacio_actual}</p>
+                                <p className="text-foreground/80">{shippingInfo.location}</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                            <MapPin className="text-primary mt-1" />
+                            <div>
+                                <p className="font-semibold text-primary">Origen</p>
+                                <p className="text-foreground/80">{shippingInfo.origin}</p>
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <MapPin className="text-accent mt-1" />
+                            <div>
+                                <p className="font-semibold text-accent">Destí</p>
+                                <p className="text-foreground/80">{shippingInfo.destination}</p>
                             </div>
                         </div>
                     </div>
                 </div>
+                 <div className="mt-6 border-t pt-4 text-center">
+                    <p className="font-semibold">Data prevista de lliurament (ETA): <span className="font-normal text-foreground/80">{shippingInfo.eta}</span></p>
+                 </div>
 
               </div>
             )}
@@ -184,3 +187,5 @@ export default function TrackingPage() {
     </div>
   );
 }
+
+    
