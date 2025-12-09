@@ -28,6 +28,16 @@ const statusConfig: Record<ShippingStatus, { progress: number; color: string; ic
   'Lliurat': { progress: 100, color: 'bg-green-500', icon: <CheckCircle2 className="h-5 w-5" /> },
 };
 
+const mockData: ShippingInfo = {
+    tracking_code: 'EJA123456',
+    origen: 'Polígon Industrial Constantí, Tarragona',
+    desti: 'Carrer de la Indústria, 123, Barcelona',
+    eta: new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleDateString('ca-ES'),
+    status: 'En trànsit',
+    ubicacio_actual: 'AP-7, a l\'alçada de Vilafranca del Penedès',
+};
+
+
 export default function TrackingPage() {
   const [trackingCode, setTrackingCode] = useState('');
   const [searchState, setSearchState] = useState<SearchState>('idle');
@@ -41,6 +51,16 @@ export default function TrackingPage() {
     setSearchState('loading');
     setError(null);
     setShippingInfo(null);
+    
+    // Simula una petita espera per millorar l'experiència d'usuari
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Dades de prova
+    if (trackingCode.toUpperCase() === 'EJA123456') {
+        setShippingInfo(mockData);
+        setSearchState('found');
+        return;
+    }
 
     try {
       const response = await fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode}`);
@@ -83,7 +103,7 @@ export default function TrackingPage() {
             />
             <Button type="submit" size="lg" disabled={searchState === 'loading' || !trackingCode} className="h-12">
               {searchState === 'loading' ? (
-                <Loader2 className="mr-2" />
+                <Loader2 className="mr-2 animate-spin" />
               ) : (
                 <Search className="mr-2" />
               )}
