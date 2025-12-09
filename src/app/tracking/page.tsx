@@ -85,7 +85,7 @@ export default function TrackingPage() {
     const isCurrent = currentStatusIndex === index;
 
     return (
-      <div className={`flex flex-col items-center ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+      <div key={status} className={`flex flex-col items-center ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
         <div className={`h-10 w-10 rounded-full flex items-center justify-center border-2 ${isCurrent ? 'bg-primary text-primary-foreground border-primary' : 'bg-background'}`}>
           {statusConfig[status].icon}
         </div>
@@ -123,7 +123,7 @@ export default function TrackingPage() {
         
         const receivedStatus = shippingInfo.status?.toUpperCase().trim() as StatusKey;
         const currentStatusKey : StatusKey = statusOrder.includes(receivedStatus) ? receivedStatus : 'Desconegut';
-        const currentStatus = statusConfig[currentStatusKey];
+        const currentStatus = statusConfig[currentStatusKey] || statusConfig['Desconegut'];
         
         return (
           <Card className="max-w-4xl mx-auto shadow-lg">
