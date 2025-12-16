@@ -31,8 +31,14 @@ export default function AssistantPage() {
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || 'Failed to fetch response');
+        let errorText = 'Failed to fetch response';
+        try {
+            const errorData = await res.json();
+            errorText = errorData.error || `HTTP error! status: ${res.status}`;
+        } catch (e) {
+            errorText = `HTTP error! status: ${res.status}`;
+        }
+        throw new Error(errorText);
       }
 
       const data = await res.json();
