@@ -34,7 +34,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https',
+        protocol: 'httpshttps',
         hostname: 'didascalia.es',
         port: '',
         pathname: '/**',
