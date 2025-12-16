@@ -28,6 +28,8 @@ export const UserProvider = ({ children, auth }: { children: React.ReactNode, au
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) return; // Wait for auth to be initialized
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setIsLoading(false);
