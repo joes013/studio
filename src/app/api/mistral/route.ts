@@ -1,5 +1,6 @@
-import MistralClient from '@mistralai/mistralai';
 import { NextRequest, NextResponse } from 'next/server';
+
+const MistralClient = require('@mistralai/mistralai');
 
 export async function POST(req: NextRequest) {
   try {
