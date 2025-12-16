@@ -26,7 +26,6 @@ const navigationItems = [
   { href: '/prices', label: 'Preus' },
   { href: '/blog', label: 'Blog' },
   { href: '/tracking', label: 'Seguiment' },
-  { href: '/assistent', label: 'Assistent' },
   { href: '/contact', label: 'Contacte' },
 ];
 
