@@ -1,8 +1,17 @@
+'use client';
+
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { Logo } from '@/components/icons';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 export function Footer() {
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
+
   return (
     <footer className="bg-primary/5 border-t">
       <div className="container mx-auto max-w-7xl px-6 py-12">
@@ -48,7 +57,7 @@ export function Footer() {
 
         <div className="mt-12 border-t pt-8">
           <p className="text-center text-sm text-foreground/60">
-            © {new Date().getFullYear()} EJA Globaltrans. Tots els drets reservats.
+            © {currentYear} EJA Globaltrans. Tots els drets reservats.
           </p>
         </div>
       </div>
