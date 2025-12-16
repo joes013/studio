@@ -20,14 +20,13 @@ interface ShippingInfo {
 
 type SearchState = 'idle' | 'loading' | 'error' | 'found' | 'not_found';
 
-type StatusKey = 'En magatzem' | 'EN TRANSIT' | 'DUANES' | 'LLIURAT' | 'Desconegut';
+type StatusKey = 'En magatzem' | 'EN TRANSIT' | 'DUANES' | 'LLIURAT';
 
 const statusConfig: Record<StatusKey, { progress: number; color: string; icon: React.ReactNode }> = {
   'En magatzem': { progress: 10, color: 'bg-yellow-500', icon: <Warehouse className="h-5 w-5" /> },
   'EN TRANSIT': { progress: 50, color: 'bg-blue-500', icon: <Truck className="h-5 w-5" /> },
   'DUANES': { progress: 75, color: 'bg-orange-500', icon: <ShieldCheck className="h-5 w-5" /> },
   'LLIURAT': { progress: 100, color: 'bg-green-500', icon: <CheckCircle2 className="h-5 w-5" /> },
-  'Desconegut': { progress: 0, color: 'bg-gray-400', icon: <AlertCircle className="h-5 w-5" /> },
 };
 const statusOrder: StatusKey[] = ['En magatzem', 'EN TRANSIT', 'DUANES', 'LLIURAT'];
 
@@ -76,10 +75,10 @@ export default function TrackingPage() {
 
   const renderTimelineNode = (status: StatusKey, index: number) => {
     if (!shippingInfo) return null;
-
-    const receivedStatus = shippingInfo.status?.toUpperCase().trim() as StatusKey;
-    const currentStatusKey = statusOrder.includes(receivedStatus) ? receivedStatus : 'Desconegut';
-    const currentStatusIndex = statusOrder.indexOf(currentStatusKey);
+    
+    const receivedStatus = shippingInfo.status?.toUpperCase().trim() as StatusKey | undefined;
+    const currentStatusKey = receivedStatus && statusOrder.includes(receivedStatus) ? receivedStatus : null;
+    const currentStatusIndex = currentStatusKey ? statusOrder.indexOf(currentStatusKey) : -1;
     
     const isActive = currentStatusIndex >= index;
     const isCurrent = currentStatusIndex === index;
@@ -121,23 +120,27 @@ export default function TrackingPage() {
       case 'found':
         if (!shippingInfo) return null;
         
-        const receivedStatus = shippingInfo.status?.toUpperCase().trim() as StatusKey;
-        const currentStatusKey : StatusKey = statusOrder.includes(receivedStatus) ? receivedStatus : 'Desconegut';
-        const currentStatus = statusConfig[currentStatusKey] || statusConfig['Desconegut'];
+        const receivedStatus = shippingInfo.status?.toUpperCase().trim() as StatusKey | undefined;
+        const currentStatusKey : StatusKey | undefined = receivedStatus && statusOrder.includes(receivedStatus) ? receivedStatus : undefined;
+        const currentStatus = currentStatusKey ? statusConfig[currentStatusKey] : null;
         
         return (
           <Card className="max-w-4xl mx-auto shadow-lg">
             <CardHeader>
               <CardTitle className="flex justify-between items-start">
                 <span>Enviament: {shippingInfo.tracking_code}</span>
-                <span className={`text-sm font-medium px-3 py-1 rounded-full ${currentStatus.color} text-white`}>{shippingInfo.status}</span>
+                {currentStatus ? (
+                  <span className={`text-sm font-medium px-3 py-1 rounded-full ${currentStatus.color} text-white`}>{shippingInfo.status}</span>
+                ) : (
+                  <span className="text-sm font-medium px-3 py-1 rounded-full bg-gray-400 text-white">{shippingInfo.status || 'Desconegut'}</span>
+                )}
               </CardTitle>
               <CardDescription>Informació detallada del teu enviament.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-8">
                <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Progrés</h3>
-                  <Progress value={currentStatus.progress} className={`h-2 ${currentStatus.color}`} />
+                  {currentStatus && <Progress value={currentStatus.progress} className={`h-2 ${currentStatus.color}`} />}
                   <div className="grid grid-cols-4 gap-2 relative items-start pt-2">
                     <div className="absolute top-7 left-0 w-full h-0.5 bg-border -z-10"/>
                     {statusOrder.map((status, index) => renderTimelineNode(status, index))}
