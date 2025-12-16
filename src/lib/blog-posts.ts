@@ -39,7 +39,7 @@ const blogPostsData: Omit<BlogPost, 'image'>[] = [
   {
     slug: 'el-futur-de-la-logistica-automatitzacio-i-ia',
     title: 'El Futur de la Logística: Automatització i Intel·ligència Artificial',
-    date: '2024-07-15',
+    date: '2024-07-16',
     author: 'Equip d\'EJA Globaltrans',
     excerpt: 'L\'automatització i la IA estan revolucionant el sector del transport. Descobreix com aquestes tecnologies estan optimitzant les cadenes de subministrament, millorant l\'eficiència i reduint costos.',
     content: `
