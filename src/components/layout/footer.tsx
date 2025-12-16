@@ -9,6 +9,7 @@ export function Footer() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
+    // This effect runs only on the client, ensuring no hydration mismatch.
     setCurrentYear(new Date().getFullYear());
   }, []);
 
@@ -64,3 +65,5 @@ export function Footer() {
     </footer>
   );
 }
+
+    

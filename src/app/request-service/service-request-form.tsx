@@ -31,7 +31,7 @@ type FormValues = z.infer<typeof formSchema>;
 export function ServiceRequestForm() {
   const { toast } = useToast();
   const { user } = useUser();
-  const getFirestore = useFirestore;
+  const getFirestore = useFirestore; // Keep the hook function itself
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -74,7 +74,7 @@ export function ServiceRequestForm() {
     // Save to Firestore if user is logged in
     if (user) {
       try {
-          const firestore = getFirestore();
+          const firestore = getFirestore(); // Get the instance only when needed
           const quoteRequestData = {
               ...values,
               userId: user.uid,
@@ -186,3 +186,5 @@ export function ServiceRequestForm() {
     </Form>
   );
 }
+
+    

@@ -1,6 +1,9 @@
+# Aquest comentari és per forçar la detecció de canvis a Git.
 [build]
   command = "npm run build"
   publish = ".next"
 
 [environment]
   NODE_VERSION = "20"
+
+    
