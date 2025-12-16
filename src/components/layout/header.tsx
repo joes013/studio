@@ -1,14 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { LogIn, LogOut, Menu, Truck, User } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { LogIn, LogOut, Menu, Truck, User as UserIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/icons';
-import { useState } from 'react';
-import { useUser } from '@/firebase/auth/use-user';
+import { useState, useEffect } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,10 +28,37 @@ const navigationItems = [
   { href: '/contact', label: 'Contacte' },
 ];
 
+interface User {
+    nom: string;
+    empresa: string;
+}
+
 export function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, signOut, isLoading } = useUser();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // This effect runs only on the client
+    try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    } catch (error) {
+        console.error("Failed to parse user from localStorage", error);
+        localStorage.removeItem('user');
+    }
+    setIsLoading(false);
+  }, [pathname]); // Re-check on route change
+
+  const handleSignOut = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    router.push('/login');
+  };
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
@@ -54,27 +80,26 @@ export function Header() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? 'User'} />
-                <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+                <AvatarFallback>{getInitials(user.nom)}</AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user.displayName}</p>
-                <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                <p className="text-sm font-medium leading-none">{user.nom}</p>
+                <p className="text-xs leading-none text-muted-foreground">{user.empresa}</p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/dashboard">
-                <User className="mr-2 h-4 w-4" />
+                <UserIcon className="mr-2 h-4 w-4" />
                 <span>Gestió</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={signOut}>
+            <DropdownMenuItem onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Tancar sessió</span>
             </DropdownMenuItem>
@@ -205,5 +230,3 @@ export function Header() {
     </header>
   );
 }
-
-    
