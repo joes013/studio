@@ -4,7 +4,11 @@ import { NextRequest, NextResponse } from 'next/server';
 const apiKey = process.env.MISTRAL_API_KEY;
 
 if (!apiKey) {
-  throw new Error('MISTRAL_API_KEY is not defined in environment variables');
+  console.error('MISTRAL_API_KEY is not defined in environment variables');
+  return NextResponse.json(
+    { error: 'MISTRAL_API_KEY is not configured on the server.' },
+    { status: 500 }
+  );
 }
 
 const client = new MistralClient(apiKey);
