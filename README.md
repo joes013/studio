@@ -1,6 +1,6 @@
 # EJA Globaltrans - Plataforma de Logística Digital
 
-Aquesta és una aplicació web moderna construïda amb Next.js, dissenyada per a l'empresa de logística EJA Globaltrans. Inclou un lloc web corporatiu, un portal de clients per a la gestió de serveis i un assistent d'Intel·ligència Artificial.
+Aquesta és una aplicació web moderna construïda amb Next.js, dissenyada per a l'empresa de logística EJA Globaltrans. Inclou un lloc web corporatiu i un portal de clients per a la gestió de serveis.
 
 ## 🚀 Començar
 
@@ -20,21 +20,9 @@ cd el-teu-repositori
 npm install
 ```
 
-### 2. Configuració de les Variables d'Entorn
+### 2. Executar el Servidor de Desenvolupament
 
-Aquest projecte utilitza una API de Mistral per al seu assistent d'IA. Perquè funcioni, has de proporcionar la teva clau d'API.
-
-Crea un fitxer anomenat `.env.local` a l'arrel del projecte i afegeix la teva clau:
-
-```env
-MISTRAL_API_KEY=LA_TEVA_API_KEY_DE_MISTRAL
-```
-
-**Nota:** El fitxer `.env.local` està inclòs al `.gitignore`, de manera que la teva clau d'API no es pujarà a GitHub.
-
-### 3. Executar el Servidor de Desenvolupament
-
-Un cop instal·lat i configurat, pots iniciar el servidor de desenvolupament local.
+Un cop instal·lat, pots iniciar el servidor de desenvolupament local.
 
 ```bash
 npm run dev
@@ -45,8 +33,8 @@ Obre [http://localhost:9002](http://localhost:9002) al teu navegador per veure l
 ## ✨ Característiques Principals
 
 - **Pàgines Corporatives:** Sobre nosaltres, serveis, preus, blog i contacte.
-- **Assistent d'IA:** Una interfície de xat per respondre preguntes dels usuaris utilitzant l'API de Mistral.
-- **Seguiment d'Enviaments:** Una pàgina per localitzar l'estat d'un enviament a través d'una API externa (SheetDB).
+- **Portal de Client:** Inici de sessió i un panell per visualitzar l'estat de les sol·licituds de servei.
+- **Seguiment d'Enviaments:** Una pàgina per localitzar l'estat d'un enviament (versió de prova).
 - **Configuració per a Desplegament:** Preparat per desplegar a plataformes com Netlify o Vercel.
 
 ## 🛠️ Tecnologies Utilitzades
@@ -54,5 +42,5 @@ Obre [http://localhost:9002](http://localhost:9002) al teu navegador per veure l
 - **Framework:** [Next.js](https://nextjs.org/)
 - **Estils:** [Tailwind CSS](https://tailwindcss.com/)
 - **Components UI:** [shadcn/ui](https://ui.shadcn.com/)
-- **Intel·ligència Artificial:** [Mistral AI](https://mistral.ai/)
+- **Autenticació i Base de Dades:** [Firebase](https://firebase.google.com/)
 - **Hosting:** Preparat per a [Netlify](https://www.netlify.com/)
