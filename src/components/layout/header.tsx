@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogIn, LogOut, Menu, Truck, User } from 'lucide-react';
+import { LogIn, LogOut, Menu, Truck, User, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -26,6 +26,7 @@ const navigationItems = [
   { href: '/prices', label: 'Preus' },
   { href: '/blog', label: 'Blog' },
   { href: '/tracking', label: 'Seguiment' },
+  { href: '/assistent', label: 'Assistent' },
   { href: '/contact', label: 'Contacte' },
 ];
 
