@@ -35,7 +35,7 @@ export default function LoginPage() {
         }
 
         try {
-            const response = await fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?usuari=${encodeURIComponent(username)}&contrasenya=${encodeURIComponent(password)}&sheet=usuaris`);
+            const response = await fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?usuari=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&sheet=usuaris`);
 
             if (!response.ok) {
                 throw new Error('Error en la connexió amb el servidor.');
