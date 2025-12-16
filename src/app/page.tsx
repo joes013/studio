@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-truck');
-const sustainabilityImage = PlaceHolderImages.find(p => p.id === 'blog-sustainability');
 
 
 const features = [
