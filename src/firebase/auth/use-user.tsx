@@ -15,7 +15,6 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { useAuth } from '../';
 
 const UserContext = createContext<{
   user: User | null;
@@ -24,26 +23,21 @@ const UserContext = createContext<{
   signOut: () => Promise<void>;
 } | null>(null);
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const auth = useAuth();
+export const UserProvider = ({ children, auth }: { children: React.ReactNode, auth: Auth }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth) {
-      // Auth is not initialized yet.
-      return;
-    }
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setIsLoading(false);
     });
+    
     return () => unsubscribe();
   }, [auth]);
 
   const value = useMemo(() => {
     const signInWithGoogle = async () => {
-      if (!auth) return;
       const provider = new GoogleAuthProvider();
       try {
         await signInWithPopup(auth, provider);
@@ -53,7 +47,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const signOut = async () => {
-      if (!auth) return;
       try {
         await firebaseSignOut(auth);
       } catch (error) {
@@ -75,7 +68,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 export const useUser = () => {
   const context = useContext(UserContext);
   if (context === null) {
-    throw new Error('useUser must be used within a UserProvider');
+    throw new Error('useUser must be used within a UserProvider, which is part of FirebaseClientProvider.');
   }
   return context;
 };

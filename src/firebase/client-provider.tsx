@@ -2,33 +2,42 @@
 
 import { Auth, getAuth } from 'firebase/auth';
 import { Firestore, getFirestore } from 'firebase/firestore';
-import { FirebaseApp } from 'firebase/app';
+import { FirebaseApp, getApps, initializeApp } from 'firebase/app';
 import { ReactNode, useMemo } from 'react';
-import { initializeFirebase, FirebaseProvider } from '.';
+import { FirebaseProvider } from '.';
 import { UserProvider } from './auth/use-user';
+import { firebaseConfig } from './config';
 
 type FirebaseClientProviderProps = {
   children: ReactNode;
 };
 
+// Declare firebaseApp, firestore, and auth outside the component
+// to ensure they are created only once per client session.
+let firebaseApp: FirebaseApp;
+let firestore: Firestore;
+let auth: Auth;
+
 export const FirebaseClientProvider = ({
   children,
 }: FirebaseClientProviderProps) => {
-  const { firebaseApp, firestore, auth } = useMemo(() => {
-    const firebaseApp = initializeFirebase();
-    const firestore = getFirestore(firebaseApp);
-    const auth = getAuth(firebaseApp);
-
+  // useMemo ensures that Firebase is initialized only once
+  const services = useMemo(() => {
+    if (!getApps().length) {
+      firebaseApp = initializeApp(firebaseConfig);
+      firestore = getFirestore(firebaseApp);
+      auth = getAuth(firebaseApp);
+    }
     return { firebaseApp, firestore, auth };
   }, []);
 
   return (
     <FirebaseProvider
-      firebaseApp={firebaseApp}
-      firestore={firestore}
-      auth={auth}
+      firebaseApp={services.firebaseApp}
+      firestore={services.firestore}
+      auth={services.auth}
     >
-      <UserProvider>{children}</UserProvider>
+      <UserProvider auth={services.auth}>{children}</UserProvider>
     </FirebaseProvider>
   );
 };
