@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, Search, AlertCircle, Warehouse, Truck, CheckCircle2, ShieldCheck, MapPin, Calendar, User } from 'lucide-react';
+import { Loader2, Search, AlertCircle, Warehouse, Truck, CheckCircle2, ShieldCheck, MapPin, Calendar, User, ServerCrash } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 interface ShippingInfo {
@@ -17,28 +17,6 @@ interface ShippingInfo {
   location: string;
   eta: string;
 }
-
-// Mock data
-const mockShippingData: { [key: string]: ShippingInfo } = {
-  'EJA123456': {
-    tracking_code: 'EJA123456',
-    client: 'Client de Prova A',
-    origin: 'Polígon Constantí, Tarragona',
-    destination: 'Zona Franca, Barcelona',
-    status: 'EN TRANSIT',
-    location: 'AP-7, prop de Vilafranca del Penedès',
-    eta: '2024-10-26',
-  },
-  'EJA654321': {
-    tracking_code: 'EJA654321',
-    client: 'Client de Prova B',
-    origin: 'Polígon Riu Clar, Tarragona',
-    destination: 'Polígono Plaza, Saragossa',
-    status: 'LLIURAT',
-    location: 'Polígono Plaza, Saragossa',
-    eta: '2024-10-24',
-  },
-};
 
 type SearchState = 'idle' | 'loading' | 'error' | 'found' | 'not_found';
 
@@ -56,6 +34,7 @@ export default function TrackingPage() {
   const [trackingCode, setTrackingCode] = useState('');
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo | null>(null);
   const [searchState, setSearchState] = useState<SearchState>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSearch = async (event: FormEvent) => {
     event.preventDefault();
@@ -63,18 +42,29 @@ export default function TrackingPage() {
 
     setSearchState('loading');
     setShippingInfo(null);
+    setErrorMessage('');
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const code = trackingCode.trim().toUpperCase();
-    const data = mockShippingData[code];
-    
-    if (data) {
-      setShippingInfo(data);
-      setSearchState('found');
-    } else {
-      setSearchState('not_found');
+    try {
+      // The API URL is defined here to avoid being called during server-side rendering
+      const apiUrl = `https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode.trim().toUpperCase()}`;
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        throw new Error('La resposta de la xarxa no ha estat correcta.');
+      }
+      
+      const data: ShippingInfo[] = await response.json();
+      
+      if (data && data.length > 0) {
+        setShippingInfo(data[0]);
+        setSearchState('found');
+      } else {
+        setSearchState('not_found');
+      }
+    } catch (error) {
+      console.error('Error fetching tracking data:', error);
+      setErrorMessage('No s\'ha pogut connectar amb el servei de seguiment. Si us plau, intenta-ho més tard.');
+      setSearchState('error');
     }
   };
 
@@ -106,12 +96,20 @@ export default function TrackingPage() {
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
           </div>
         );
+      case 'error':
+        return (
+           <Alert variant="destructive" className="max-w-2xl mx-auto">
+            <ServerCrash className="h-4 w-4" />
+            <AlertTitle>Error de Connexió</AlertTitle>
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        );
       case 'not_found':
         return (
           <Alert variant="destructive" className="max-w-2xl mx-auto">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>No s'ha trobat</AlertTitle>
-            <AlertDescription>No hem trobat cap enviament amb el codi de prova. Prova amb 'EJA123456' o 'EJA654321'.</AlertDescription>
+            <AlertDescription>No hem trobat cap enviament amb el codi de seguiment proporcionat. Si us plau, verifica el codi i torna a intentar-ho.</AlertDescription>
           </Alert>
         );
       case 'found':
@@ -155,7 +153,7 @@ export default function TrackingPage() {
                 </div>
                 <div className="space-y-1">
                   <p className="text-muted-foreground flex items-center gap-2"><Calendar className="h-4 w-4" /> Data Prevista (ETA)</p>
-                  <p className="font-semibold text-base">{shippingInfo.eta}</p>
+                  <p className="font-semibold text-base">{new Date(shippingInfo.eta).toLocaleDateString('ca-ES')}</p>
                 </div>
               </div>
 
@@ -183,7 +181,7 @@ export default function TrackingPage() {
       <div className="text-center">
         <h1 className="text-4xl font-bold tracking-tight font-headline sm:text-5xl">Localitza el teu enviament</h1>
         <p className="mt-6 max-w-2xl mx-auto text-lg text-foreground/80">
-          Introdueix un codi de seguiment de prova per veure l'estat de la teva mercaderia. Prova amb 'EJA123456'.
+          Introdueix el codi de seguiment per veure l'estat actual de la teva mercaderia.
         </p>
       </div>
 
@@ -193,7 +191,7 @@ export default function TrackingPage() {
             type="text"
             value={trackingCode}
             onChange={(e) => setTrackingCode(e.target.value)}
-            placeholder="Ex: EJA123456"
+            placeholder="Introdueix el teu codi de seguiment"
             className="flex-grow text-base"
             disabled={searchState === 'loading'}
           />

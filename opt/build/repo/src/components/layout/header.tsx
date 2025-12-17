@@ -16,7 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 const navigationItems = [
   { href: '/', label: 'Inici' },
@@ -46,10 +46,13 @@ export function Header() {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));
+        } else {
+            setUser(null);
         }
     } catch (error) {
         console.error("Failed to parse user from localStorage", error);
         localStorage.removeItem('user');
+        setUser(null);
     }
     setIsLoading(false);
   }, [pathname]); // Re-check on route change
@@ -71,7 +74,7 @@ export function Header() {
 
   const AuthButton = () => {
     if (isLoading) {
-      return null; // Don't show anything while loading user state
+      return <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />;
     }
 
     if (user) {
