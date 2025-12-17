@@ -45,7 +45,9 @@ export default function TrackingPage() {
     setErrorMessage('');
 
     try {
-      const response = await fetch(`https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode.trim().toUpperCase()}`);
+      // The API URL is defined here to avoid being called during server-side rendering
+      const apiUrl = `https://sheetdb.io/api/v1/yla6vr6ie4rsn/search?tracking_code=${trackingCode.trim().toUpperCase()}`;
+      const response = await fetch(apiUrl);
       
       if (!response.ok) {
         throw new Error('La resposta de la xarxa no ha estat correcta.');
