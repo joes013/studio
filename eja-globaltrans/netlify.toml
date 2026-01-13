@@ -1,0 +1,6 @@
+# Configuració per al desplegament a Netlify
+[build]
+  command = "npm run build"
+
+[environment]
+  NODE_VERSION = "20"
