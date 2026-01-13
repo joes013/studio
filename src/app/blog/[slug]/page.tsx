@@ -5,8 +5,16 @@ import { Calendar, User, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find(p => p.slug === params.slug);
+// Correctly type the props for a dynamic page in the App Router
+type BlogPostPageProps = {
+  params: {
+    slug: string;
+  };
+};
+
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const { slug } = params;
+  const post = blogPosts.find(p => p.slug === slug);
 
   if (!post) {
     notFound();
