@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { LogIn, LogOut, Menu, Truck, User as UserIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/icons';
 import { useState, useEffect } from 'react';
 import {
@@ -178,6 +178,8 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left">
+              <SheetTitle className="sr-only">Menú</SheetTitle>
+              <SheetDescription className="sr-only">Menú principal de navegació del lloc</SheetDescription>
               <Link href="/" className="mb-8" onClick={() => setIsMobileMenuOpen(false)}>
                 <Logo />
               </Link>
