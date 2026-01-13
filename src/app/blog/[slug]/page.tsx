@@ -5,8 +5,7 @@ import { Calendar, User, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-// The props type is now defined inline to match Next.js App Router expectations,
-// resolving the TypeScript build error.
+// Correcció: S'ha definit el tipus dels `props` directament per complir amb les convencions de l'App Router de Next.js.
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   const post = blogPosts.find(p => p.slug === slug);
