@@ -5,14 +5,9 @@ import { Calendar, User, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-// Correctly type the props for a dynamic page in the App Router
-type BlogPostPageProps = {
-  params: {
-    slug: string;
-  };
-};
-
-export default function BlogPostPage({ params }: BlogPostPageProps) {
+// The props type is now defined inline to match Next.js App Router expectations,
+// resolving the TypeScript build error.
+export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   const post = blogPosts.find(p => p.slug === slug);
 
