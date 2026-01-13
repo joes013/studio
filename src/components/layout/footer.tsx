@@ -65,5 +65,3 @@ export function Footer() {
     </footer>
   );
 }
-
-    
