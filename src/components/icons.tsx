@@ -5,7 +5,7 @@ export function Logo(props: SVGProps<HTMLDivElement>) {
   return (
     <div className="flex items-center gap-2" {...props}>
       <Image 
-        src="https://i.pinimg.com/originals/fc/28/58/fc28587000b3e4408702a74c41ff98e0.jpg"
+        src="https://i.pravatar.cc/32?u=12345"
         alt="EJA Globaltrans Logo" 
         width={32} 
         height={32} 
