@@ -10,19 +10,19 @@
     --card-foreground: 211 39% 15%;
     --popover: 0 0% 100%;
     --popover-foreground: 211 39% 15%;
-    --primary: 0 63% 45%; /* Vermell */
+    --primary: 0 72% 51%; /* Vermell */
     --primary-foreground: 0 0% 98%;
-    --secondary: 210 20% 88%;
-    --secondary-foreground: 211 39% 15%;
+    --secondary: 24 96% 53%; /* Taronja */
+    --secondary-foreground: 0 0% 98%;
     --muted: 210 20% 88%;
     --muted-foreground: 211 39% 45%;
-    --accent: 0 63% 55%; /* Accent vermellós */
+    --accent: 0 72% 56%; /* Accent vermellós */
     --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 210 20% 80%;
     --input: 210 20% 88%;
-    --ring: 0 63% 45%; /* Ring vermell */
+    --ring: 0 72% 51%; /* Ring vermell */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -37,19 +37,19 @@
     --card-foreground: 210 29% 95%;
     --popover: 211 39% 10%;
     --popover-foreground: 210 29% 95%;
-    --primary: 0 63% 50%; /* Vermell (dark) */
+    --primary: 0 72% 51%; /* Vermell (dark) */
     --primary-foreground: 0 0% 98%;
-    --secondary: 211 39% 20%;
-    --secondary-foreground: 210 29% 95%;
+    --secondary: 24 90% 45%; /* Taronja (dark) */
+    --secondary-foreground: 0 0% 98%;
     --muted: 211 39% 20%;
     --muted-foreground: 210 29% 65%;
-    --accent: 0 63% 55%; /* Accent vermellós (dark) */
+    --accent: 0 72% 56%; /* Accent vermellós (dark) */
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 211 39% 25%;
     --input: 211 39% 25%;
-    --ring: 0 63% 50%; /* Ring vermell (dark) */
+    --ring: 0 72% 51%; /* Ring vermell (dark) */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
