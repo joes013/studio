@@ -61,9 +61,11 @@ export default function DocumentsPage() {
   const [error, setError] = useState<string | null>(null);
 
   const procesarYAgruparDatos = useCallback((documentos: Documento[], usuarios: Usuario[], usuarioLogueado: { nom: string; empresa: string }) => {
-    const usuarioCompleto = usuarios.find(u => u.usuari === usuarioLogueado.nom);
+    // Robust check for user data, case-insensitive
+    const usuarioCompleto = usuarios.find(u => u.usuari?.toLowerCase() === usuarioLogueado.nom?.toLowerCase());
+
     if (!usuarioCompleto) {
-      setError('No s\'han pogut verificar les teves dades d\'usuari.');
+      setError("No s'han pogut verificar les teves dades d'usuari. Assegura't que el teu usuari existeix a la base de dades.");
       return [];
     }
     
@@ -72,7 +74,8 @@ export default function DocumentsPage() {
     const esAdmin = ['admin', 'administrador', 'treballador'].includes(usuarioCompleto.rol);
     const documentosFiltrados = esAdmin
       ? documentos
-      : documentos.filter(d => d.usuari === usuarioLogueado.nom);
+      // Robust filtering, case-insensitive
+      : documentos.filter(d => d.usuari?.toLowerCase() === usuarioLogueado.nom?.toLowerCase());
 
     const facturasMap = new Map<string, { lineasCrudas: Documento[]; cliente?: Usuario }>();
 
@@ -81,7 +84,7 @@ export default function DocumentsPage() {
       if (!facturasMap.has(doc.num_factura)) {
         facturasMap.set(doc.num_factura, {
           lineasCrudas: [],
-          cliente: usuarios.find(u => u.usuari === doc.usuari)
+          cliente: usuarios.find(u => u.usuari?.toLowerCase() === doc.usuari?.toLowerCase())
         });
       }
       facturasMap.get(doc.num_factura)!.lineasCrudas.push(doc);
@@ -89,7 +92,7 @@ export default function DocumentsPage() {
 
     const facturasProcesadas: FacturaAgrupada[] = [];
     facturasMap.forEach((value, key) => {
-      if (!value.cliente) return;
+      if (!value.cliente || value.lineasCrudas.length === 0) return;
 
       const lineas = value.lineasCrudas.map(l => {
         const precioUnitario = parseFloat(l.preu_unitari) || 0;
@@ -114,7 +117,7 @@ export default function DocumentsPage() {
 
       const desgloseIva = Array.from(desgloseIvaMap.entries()).map(([tipo, { base, cuota }]) => ({ tipo, base, cuota }));
       const baseImponible = lineas.reduce((sum, l) => sum + l.neto, 0);
-      const totalFactura = desgloseIva.reduce((sum, item) => sum + item.base + item.cuota, 0);
+      const totalFactura = baseImponible + desgloseIva.reduce((sum, item) => sum + item.cuota, 0);
 
       facturasProcesadas.push({
         numero: key,
@@ -139,7 +142,15 @@ export default function DocumentsPage() {
       return;
     }
 
-    const usuarioLogueado = JSON.parse(storedUser);
+    let usuarioLogueado;
+    try {
+        usuarioLogueado = JSON.parse(storedUser);
+    } catch (e) {
+        localStorage.removeItem('user');
+        router.push('/login');
+        return;
+    }
+
 
     const fetchData = async () => {
       try {
@@ -163,6 +174,7 @@ export default function DocumentsPage() {
         }
       } catch (e: any) {
         setError(e.message || 'Ha ocorregut un error inesperat.');
+        console.error(e);
       } finally {
         setIsLoading(false);
       }
@@ -329,5 +341,3 @@ export default function DocumentsPage() {
     </div>
   );
 }
-
-    
