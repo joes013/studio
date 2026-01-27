@@ -145,7 +145,7 @@ export default function DocumentsPage() {
       try {
         const [resDocs, resUsers] = await Promise.all([
           fetch('https://sheetdb.io/api/v1/yla6vr6ie4rsn?sheet=documents'),
-          fetch('https://sheetdb.io/api/v1/yla6vr6ie4rsn?sheet=usuaris'),
+          fetch('https://sheetdb.io/api/v1/yla6vr6ie4rsn?sheet=usuari'),
         ]);
 
         if (!resDocs.ok || !resUsers.ok) {
@@ -329,3 +329,5 @@ export default function DocumentsPage() {
     </div>
   );
 }
+
+    
