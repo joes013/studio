@@ -54,7 +54,7 @@ export default function ServicesPage() {
                      {service.icon}
                   </div>
                   <div className="flex flex-col">
-                    <h3 className="text-xl font-semibold font-headline text-primary">{service.title}</h3>
+                    <h3 className="text-xl font-bold font-headline text-primary">{service.title}</h3>
                     <p className="text-sm text-foreground/70 mt-1">{service.description}</p>
                   </div>
                 </div>
