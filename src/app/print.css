@@ -1,0 +1,18 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #zona-factura, #zona-factura * {
+    visibility: visible;
+  }
+  #zona-factura {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LogIn, LogOut, Menu, Truck, User as UserIcon } from 'lucide-react';
+import { LogIn, LogOut, Menu, Truck, User as UserIcon, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -101,6 +101,12 @@ export function Header() {
                 <span>Gestió</span>
               </Link>
             </DropdownMenuItem>
+             <DropdownMenuItem asChild>
+              <Link href="/documents">
+                <FileText className="mr-2 h-4 w-4" />
+                <span>Documents</span>
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
@@ -121,7 +127,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 print:hidden">
       <div className="container flex h-20 max-w-7xl items-center justify-between">
         <Link
           href="/"
@@ -147,17 +153,30 @@ export function Header() {
             </Link>
           ))}
            {user && (
-             <Link
-              href="/dashboard"
-              className={cn(
-                'transition-colors hover:text-accent',
-                pathname.startsWith('/dashboard')
-                  ? 'text-primary'
-                  : 'text-foreground/60'
-              )}
-            >
-              Gestió
-            </Link>
+            <>
+              <Link
+                href="/dashboard"
+                className={cn(
+                  'transition-colors hover:text-accent',
+                  pathname.startsWith('/dashboard')
+                    ? 'text-primary'
+                    : 'text-foreground/60'
+                )}
+              >
+                Gestió
+              </Link>
+              <Link
+                href="/documents"
+                className={cn(
+                  'transition-colors hover:text-accent',
+                  pathname.startsWith('/documents')
+                    ? 'text-primary'
+                    : 'text-foreground/60'
+                )}
+              >
+                Documents
+              </Link>
+             </>
            )}
         </nav>
 
@@ -201,6 +220,7 @@ export function Header() {
                     </Link>
                   ))}
                   {user && (
+                    <>
                      <Link
                       href="/dashboard"
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -211,6 +231,17 @@ export function Header() {
                     >
                       Gestió
                     </Link>
+                     <Link
+                      href="/documents"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        'text-lg font-semibold transition-colors hover:text-accent',
+                       pathname.startsWith('/documents') ? 'text-primary' : 'text-foreground'
+                      )}
+                    >
+                      Documents
+                    </Link>
+                    </>
                   )}
                 </nav>
                  <div className="mt-auto flex flex-col gap-4">
