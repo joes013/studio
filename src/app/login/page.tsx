@@ -47,7 +47,7 @@ export default function LoginPage() {
                 const user = data[0];
                 // Save user info to localStorage
                 localStorage.setItem('user', JSON.stringify({
-                    nom: user.nom,
+                    nom: user.usuari, // Corregit: fer servir 'usuari' en lloc de 'nom'
                     empresa: user.empresa,
                 }));
                 router.push('/dashboard');
