@@ -7,8 +7,8 @@ export function Logo(props: SVGProps<HTMLDivElement>) {
       <Image 
         src="/12345.png"
         alt="EJA Globaltrans Logo" 
-        width={32} 
-        height={32} 
+        width={40} 
+        height={40} 
         className="text-primary"
       />
       <span className="font-headline font-bold text-xl text-primary hidden sm:inline-block">
