@@ -131,7 +131,7 @@ export function Header() {
           <Logo />
         </Link>
 
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+        <nav className="hidden md:flex items-center space-x-6 text-sm font-semibold">
           {navigationItems.map(item => (
             <Link
               key={item.href}
@@ -139,7 +139,7 @@ export function Header() {
               className={cn(
                 'transition-colors hover:text-accent',
                 (pathname.startsWith(item.href) && item.href !== '/') || pathname === item.href
-                  ? 'text-primary font-semibold'
+                  ? 'text-primary'
                   : 'text-foreground/60'
               )}
             >
@@ -152,7 +152,7 @@ export function Header() {
               className={cn(
                 'transition-colors hover:text-accent',
                 pathname.startsWith('/dashboard')
-                  ? 'text-primary font-semibold'
+                  ? 'text-primary'
                   : 'text-foreground/60'
               )}
             >
@@ -191,7 +191,7 @@ export function Header() {
                       href={item.href}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
-                        'text-lg font-medium transition-colors hover:text-accent',
+                        'text-lg font-semibold transition-colors hover:text-accent',
                         (pathname.startsWith(item.href) && item.href !== '/') || pathname === item.href
                           ? 'text-primary'
                           : 'text-foreground'
@@ -205,7 +205,7 @@ export function Header() {
                       href="/dashboard"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={cn(
-                        'text-lg font-medium transition-colors hover:text-accent',
+                        'text-lg font-semibold transition-colors hover:text-accent',
                        pathname.startsWith('/dashboard') ? 'text-primary' : 'text-foreground'
                       )}
                     >
