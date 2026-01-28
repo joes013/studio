@@ -4,9 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableFooter } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, Printer, AlertCircle, FileText, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, Printer, AlertCircle, FileText, ChevronLeft, Eye } from 'lucide-react';
 
 // --- Tipus de Dades ---
 interface Documento {
@@ -56,7 +56,6 @@ export default function DocumentsPage() {
   const [usuarioActual, setUsuarioActual] = useState<{ nom: string; empresa: string; rol: string } | null>(null);
   const [facturas, setFacturas] = useState<FacturaAgrupada[]>([]);
   const [facturaSeleccionada, setFacturaSeleccionada] = useState<FacturaAgrupada | null>(null);
-  const [indiceFactura, setIndiceFactura] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -74,7 +73,6 @@ export default function DocumentsPage() {
     const esAdmin = ['admin', 'administrador', 'treballador'].includes(usuarioCompleto.rol);
     const documentosFiltrados = esAdmin
       ? documentos
-      // Robust filtering, case-insensitive
       : documentos.filter(d => d.usuari?.toLowerCase() === usuarioLogueado.nom?.toLowerCase());
 
     const facturasMap = new Map<string, { lineasCrudas: Documento[]; cliente?: Usuario }>();
@@ -151,7 +149,6 @@ export default function DocumentsPage() {
         return;
     }
 
-
     const fetchData = async () => {
       try {
         const [resDocs, resUsers] = await Promise.all([
@@ -168,10 +165,6 @@ export default function DocumentsPage() {
 
         const procesadas = procesarYAgruparDatos(documentos, usuarios, usuarioLogueado);
         setFacturas(procesadas);
-        if (procesadas.length > 0) {
-          setFacturaSeleccionada(procesadas[0]);
-          setIndiceFactura(0);
-        }
       } catch (e: any) {
         setError(e.message || 'Ha ocorregut un error inesperat.');
         console.error(e);
@@ -187,16 +180,7 @@ export default function DocumentsPage() {
     window.print();
   };
 
-  const cambiarFactura = (direccion: 'prev' | 'next') => {
-    let nuevoIndice = indiceFactura;
-    if (direccion === 'next') {
-        nuevoIndice = (indiceFactura + 1) % facturas.length;
-    } else {
-        nuevoIndice = (indiceFactura - 1 + facturas.length) % facturas.length;
-    }
-    setIndiceFactura(nuevoIndice);
-    setFacturaSeleccionada(facturas[nuevoIndice]);
-  }
+  const isAdmin = usuarioActual && ['admin', 'administrador', 'treballador'].includes(usuarioActual.rol);
 
   if (isLoading) {
     return (
@@ -217,8 +201,8 @@ export default function DocumentsPage() {
       </div>
     );
   }
-
-  if (facturas.length === 0) {
+  
+  if (facturas.length === 0 && !isLoading) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-16 text-center">
          <FileText className="mx-auto h-12 w-12 text-muted-foreground" />
@@ -228,29 +212,58 @@ export default function DocumentsPage() {
     );
   }
 
+  if (!facturaSeleccionada) {
+    // --- VISTA DE LLISTAT ---
+    return (
+        <div className="container mx-auto max-w-5xl px-4 py-16 sm:py-24">
+            <div className="mb-8">
+                <h1 className="text-3xl font-headline font-bold text-foreground">Les Teves Factures</h1>
+                <p className="text-muted-foreground mt-2">Selecciona una factura del llistat per veure els detalls i imprimir-la.</p>
+            </div>
+            <Card>
+                <CardContent className="p-0">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[150px] font-bold">Nº Factura</TableHead>
+                                <TableHead className="font-bold">Data</TableHead>
+                                {isAdmin && <TableHead className="font-bold">Client</TableHead>}
+                                <TableHead className="text-right font-bold">Total</TableHead>
+                                <TableHead className="w-[50px]"></TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {facturas.map((factura) => (
+                                <TableRow key={factura.numero} className="cursor-pointer hover:bg-muted/50" onClick={() => setFacturaSeleccionada(factura)}>
+                                    <TableCell className="font-medium">{factura.numero}</TableCell>
+                                    <TableCell>{new Date(factura.fecha).toLocaleDateString('ca-ES')}</TableCell>
+                                    {isAdmin && <TableCell>{factura.cliente.empresa}</TableCell>}
+                                    <TableCell className="text-right font-semibold">{factura.totalFactura.toFixed(2)}€</TableCell>
+                                    <TableCell className="text-center"><Eye className="h-5 w-5 text-muted-foreground"/></TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+        </div>
+    );
+  }
+  
+  // --- VISTA DE DETALL ---
   return (
     <div className="bg-background font-body">
         <div className="container mx-auto max-w-5xl p-4 sm:p-8">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 print:hidden">
-                <div>
-                    <h1 className="text-3xl font-headline font-bold text-foreground">Els Teus Documents</h1>
-                    <p className="text-muted-foreground">Aquí pots veure i imprimir les teves factures.</p>
-                </div>
-                <Button onClick={handlePrint} size="lg">
-                    <Printer className="mr-2" /> Imprimir PDF
-                </Button>
-            </div>
-
-            <div className="flex justify-between items-center mb-4 print:hidden">
-                <Button variant="outline" onClick={() => cambiarFactura('prev')} disabled={facturas.length <= 1}>
-                    <ChevronLeft /> Anterior
+                <Button variant="outline" onClick={() => setFacturaSeleccionada(null)}>
+                    <ChevronLeft className="mr-2 h-4 w-4" /> Tornar al llistat
                 </Button>
                 <div className="text-center">
-                    <p className="font-bold font-headline">{facturaSeleccionada?.numero}</p>
-                    <p className="text-sm text-muted-foreground">{new Date(facturaSeleccionada?.fecha || '').toLocaleDateString('ca-ES')}</p>
+                    <h2 className="text-2xl font-bold font-headline">{facturaSeleccionada.numero}</h2>
+                    <p className="text-muted-foreground">{new Date(facturaSeleccionada.fecha || '').toLocaleDateString('ca-ES')}</p>
                 </div>
-                <Button variant="outline" onClick={() => cambiarFactura('next')} disabled={facturas.length <= 1}>
-                    Següent <ChevronRight />
+                <Button onClick={handlePrint} size="lg">
+                    <Printer className="mr-2 h-4 w-4" /> Imprimir PDF
                 </Button>
             </div>
 
