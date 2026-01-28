@@ -116,10 +116,20 @@ export default function DocumentsPage() {
       const desgloseIva = Array.from(desgloseIvaMap.entries()).map(([tipo, { base, cuota }]) => ({ tipo, base, cuota }));
       const baseImponible = lineas.reduce((sum, l) => sum + l.neto, 0);
       const totalFactura = baseImponible + desgloseIva.reduce((sum, item) => sum + item.cuota, 0);
+      
+      const fechaOriginal = value.lineasCrudas[0].data;
+      let fechaCorregida = fechaOriginal;
+      if (fechaOriginal && typeof fechaOriginal === 'string') {
+        const parts = fechaOriginal.split(' ')[0].split('/');
+        if (parts.length === 3) {
+          // Assume DD/MM/YYYY, convert to YYYY-MM-DD for reliable parsing
+          fechaCorregida = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+      }
 
       facturasProcesadas.push({
         numero: key,
-        fecha: value.lineasCrudas[0].data,
+        fecha: fechaCorregida,
         formaPago: value.lineasCrudas[0].fpagament,
         cliente: value.cliente,
         lineas,
