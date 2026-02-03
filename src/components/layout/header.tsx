@@ -151,32 +151,6 @@ export function Header() {
               {item.label}
             </Link>
           ))}
-           {user && (
-            <>
-              <Link
-                href="/dashboard"
-                className={cn(
-                  'transition-colors hover:text-accent',
-                  pathname.startsWith('/dashboard')
-                    ? 'text-primary'
-                    : 'text-foreground/60'
-                )}
-              >
-                Gestió
-              </Link>
-              <Link
-                href="/documents"
-                className={cn(
-                  'transition-colors hover:text-accent',
-                  pathname.startsWith('/documents')
-                    ? 'text-primary'
-                    : 'text-foreground/60'
-                )}
-              >
-                Documents
-              </Link>
-             </>
-           )}
         </nav>
 
         <div className="flex items-center gap-4">
