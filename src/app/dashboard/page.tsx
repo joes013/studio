@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, LogOut, Truck, FileText } from 'lucide-react';
 
 interface User {
     nom: string;
@@ -51,16 +53,57 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="container mx-auto max-w-4xl px-4 py-16 sm:py-24 text-center">
-            <h1 className="text-4xl font-bold tracking-tight font-headline sm:text-5xl">
-                Benvingut a la teva zona privada, {user.nom}
-            </h1>
-            <p className="mt-4 text-lg text-foreground/80">
-                Aquí podràs gestionar els teus serveis i sol·licituds.
-            </p>
-            <div className="mt-8">
-                <Button onClick={handleLogout} size="lg">
-                    Sortir
+        <div className="container mx-auto max-w-4xl px-4 py-16 sm:py-24">
+            <div className="text-center mb-12">
+                <h1 className="text-4xl font-bold tracking-tight font-headline sm:text-5xl">
+                    Benvingut, {user.nom}
+                </h1>
+                <p className="mt-4 text-lg text-foreground/80">
+                    Aquesta és la teva zona privada. Des d'aquí pots gestionar els teus serveis, documents i seguiments.
+                </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Truck /> Seguiment d'Enviaments
+                        </CardTitle>
+                        <CardDescription>
+                            Localitza la teva mercaderia en temps real amb el teu codi de seguiment.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                         <Button asChild className="w-full">
+                            <Link href="/tracking">
+                                Anar a Seguiment
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                           <FileText /> Documents
+                        </CardTitle>
+                        <CardDescription>
+                            Consulta i descarrega les teves factures i altres documents importants.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                         <Button asChild className="w-full">
+                            <Link href="/documents">
+                                Anar a Documents
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <div className="mt-12 text-center">
+                <Button onClick={handleLogout} variant="outline">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Tancar Sessió
                 </Button>
             </div>
         </div>

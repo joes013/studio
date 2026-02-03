@@ -23,7 +23,6 @@ const navigationItems = [
   { href: '/about', label: 'Sobre Nosaltres' },
   { href: '/services', label: 'Serveis' },
   { href: '/blog', label: 'Blog' },
-  { href: '/tracking', label: 'Seguiment' },
   { href: '/contact', label: 'Contacte' },
 ];
 
