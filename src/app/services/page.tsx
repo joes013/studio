@@ -1,6 +1,9 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Truck, Warehouse, Globe, ShieldCheck } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Truck, Warehouse, Globe, ShieldCheck, Check } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const services = [
@@ -34,53 +37,150 @@ const services = [
   },
 ];
 
+const pricingTiers = [
+  {
+    name: 'Transport Nacional',
+    price: 'Des de 185€',
+    description: 'Solucions de càrrega completa (FTL) i grupaje (LTL) a tota la península.',
+    features: [
+      'Lliuraments en 24-72h',
+      'Seguiment en temps real',
+      'Assegurança bàsica inclosa',
+      'Atenció al client dedicada',
+    ],
+    cta: 'Sol·licitar Pressupost',
+  },
+  {
+    name: 'Transport Internacional',
+    price: 'Consultar',
+    description: 'Connectem la teva empresa amb Europa, gestionant tots els tràmits duaners.',
+    features: [
+      'Cobertura a tota la UE',
+      'Gestió de duanes (DDP/DAP)',
+      'Assessoria en comerç exterior',
+      'Xarxa de socis europeus',
+    ],
+    cta: 'Contactar per a tarifa',
+  },
+  {
+    name: 'Emmagatzematge',
+    price: 'Des de 12€/m²',
+    description: 'Emmagatzematge segur i gestió d\'estocs a les nostres instal·lacions.',
+    features: [
+      'Magatzems amb seguretat 24/7',
+      'Control d\'inventari',
+      'Picking i packing',
+      'Logística inversa',
+    ],
+    cta: 'Consultar Disponibilitat',
+  },
+    {
+    name: 'Mercaderies Especials',
+    price: 'Personalitzat',
+    description: 'Transport de mercaderies perilloses (ADR), refrigerades o de grans dimensions.',
+    features: [
+      'Vehicles i personal certificat ADR',
+      'Control de temperatura',
+      'Transport de càrregues voluminoses',
+      'Permisos especials gestionats',
+    ],
+    cta: 'Demanar estudi',
+  },
+];
+
+
 export default function ServicesPage() {
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-16 sm:py-24">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight font-headline sm:text-5xl">Els Nostres Serveis</h1>
-        <p className="mt-6 max-w-3xl mx-auto text-lg text-foreground/80">
-          Oferim una àmplia gamma de solucions logístiques dissenyades per adaptar-se a les necessitats úniques del teu negoci.
-        </p>
-      </div>
+    <div className="container mx-auto max-w-7xl px-4 py-16 sm:py-24 divide-y divide-border">
 
-      <div className="mt-16 max-w-4xl mx-auto">
-        <Accordion type="single" collapsible className="w-full space-y-4">
-          {services.map((service, index) => (
-            <AccordionItem key={service.title} value={`item-${index}`} className="border rounded-lg bg-card overflow-hidden">
-              <AccordionTrigger className="p-6 text-left hover:no-underline">
-                <div className="flex items-center gap-4">
-                   <div className="rounded-full bg-accent/10 p-3">
-                     {service.icon}
-                  </div>
-                  <div className="flex flex-col">
-                    <h3 className="text-xl font-bold font-headline text-primary">{service.title}</h3>
-                    <p className="text-sm text-foreground/70 mt-1">{service.description}</p>
-                  </div>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="bg-primary/5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-                    <div className="prose prose-sm max-w-none text-foreground/80">
-                        <p>{service.detailedDescription}</p>
+      {/* Services Section */}
+      <section className="pb-16">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-tight font-headline sm:text-5xl">Els Nostres Serveis</h1>
+          <p className="mt-6 max-w-3xl mx-auto text-lg text-foreground/80">
+            Oferim una àmplia gamma de solucions logístiques dissenyades per adaptar-se a les necessitats úniques del teu negoci.
+          </p>
+        </div>
+
+        <div className="mt-16 max-w-4xl mx-auto">
+          <Accordion type="single" collapsible className="w-full space-y-4">
+            {services.map((service, index) => (
+              <AccordionItem key={service.title} value={`item-${index}`} className="border rounded-lg bg-card overflow-hidden">
+                <AccordionTrigger className="p-6 text-left hover:no-underline">
+                  <div className="flex items-center gap-4">
+                    <div className="rounded-full bg-accent/10 p-3">
+                      {service.icon}
                     </div>
-                    <div className="relative h-48 md:h-full w-full rounded-md overflow-hidden">
-                        {service.image && (
-                        <Image
-                            src={service.image.imageUrl}
-                            alt={service.description}
-                            fill
-                            className="object-cover"
-                            data-ai-hint={service.image.imageHint}
-                        />
-                        )}
+                    <div className="flex flex-col">
+                      <h3 className="text-xl font-bold font-headline text-primary">{service.title}</h3>
+                      <p className="text-sm text-foreground/70 mt-1">{service.description}</p>
                     </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="bg-primary/5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
+                      <div className="prose prose-sm max-w-none text-foreground/80">
+                          <p>{service.detailedDescription}</p>
+                      </div>
+                      <div className="relative h-48 md:h-full w-full rounded-md overflow-hidden">
+                          {service.image && (
+                          <Image
+                              src={service.image.imageUrl}
+                              alt={service.description}
+                              fill
+                              className="object-cover"
+                              data-ai-hint={service.image.imageHint}
+                          />
+                          )}
+                      </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
+      {/* Prices Section */}
+      <section className="pt-24">
+        <div className="text-center">
+          <h2 className="text-4xl font-bold tracking-tight font-headline sm:text-5xl">Tarifes i Preus</h2>
+          <p className="mt-6 max-w-3xl mx-auto text-lg text-foreground/80">
+            Troba la solució logística que millor s'adapta a les teves necessitats amb preus clars i competitius.
+          </p>
+        </div>
+
+        <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {pricingTiers.map((tier) => (
+            <Card key={tier.name} className="flex flex-col shadow-lg">
+              <CardHeader>
+                <CardTitle className="font-headline text-2xl">{tier.name}</CardTitle>
+                <CardDescription className="h-10">{tier.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow space-y-6">
+                <div className="text-4xl font-bold">{tier.price}</div>
+                <ul className="space-y-3">
+                  {tier.features.map((feature, index) => (
+                    <li key={index} className="flex items-center gap-2 text-sm">
+                      <Check className="h-5 w-5 text-accent flex-shrink-0" />
+                      <span className="text-foreground/80">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter>
+                <Button asChild className="w-full" variant={tier.name === 'Transport Internacional' ? 'secondary' : 'default'}>
+                  <Link href="/request-service">{tier.cta}</Link>
+                </Button>
+              </CardFooter>
+            </Card>
           ))}
-        </Accordion>
-      </div>
+        </div>
+        <div className="mt-16 text-center text-sm text-foreground/70">
+              <p>Els preus mostrats són orientatius i poden variar segons el pes, volum, distància i naturalesa de la mercaderia.</p>
+              <p>Per a un pressupost exacte, si us plau, contacta amb nosaltres o sol·licita un servei.</p>
+          </div>
+      </section>
     </div>
   );
 }
