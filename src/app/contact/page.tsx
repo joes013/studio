@@ -1,14 +1,58 @@
+'use client';
+
+import { useState, FormEvent } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone, Loader2 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Card, CardContent } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
 
 const mapImage = PlaceHolderImages.find(p => p.id === 'contact-map');
 
 export default function ContactPage() {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
+
+    const formData = new FormData(event.currentTarget);
+    
+    try {
+      const response = await fetch('https://formspree.io/f/movgwnzj', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Missatge Enviat!',
+          description: 'Gràcies per contactar amb nosaltres. Et respondrem aviat.',
+          variant: 'default',
+        });
+        (event.target as HTMLFormElement).reset();
+      } else {
+        throw new Error('Error en l\'enviament del formulari.');
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: 'destructive',
+        title: 'Error en l\'enviament',
+        description: 'No s\'ha pogut enviar el missatge. Si us plau, intenta-ho de nou més tard.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className="container mx-auto max-w-7xl px-4 py-16 sm:py-24">
       <div className="text-center">
@@ -22,20 +66,26 @@ export default function ContactPage() {
         <Card>
           <CardContent className="p-8">
             <h2 className="text-2xl font-bold font-headline mb-6">Envia'ns un missatge</h2>
-            <form action="https://formspree.io/f/movgwnzj" method="POST" className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">Nom complet</label>
-                <Input type="text" id="name" name="name" placeholder="El teu nom" required />
+                <Input type="text" id="name" name="name" placeholder="El teu nom" required disabled={isLoading} />
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">Correu electrònic</label>
-                <Input type="email" id="email" name="email" placeholder="el.teu@email.com" required />
+                <Input type="email" id="email" name="email" placeholder="el.teu@email.com" required disabled={isLoading} />
               </div>
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-foreground mb-1">Missatge</label>
-                <Textarea id="message" name="message" rows={5} placeholder="Com et podem ajudar?" required />
+                <Textarea id="message" name="message" rows={5} placeholder="Com et podem ajudar?" required disabled={isLoading} />
               </div>
-              <Button type="submit" className="w-full" size="lg">Enviar Missatge</Button>
+              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+                 {isLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  'Enviar Missatge'
+                )}
+              </Button>
             </form>
           </CardContent>
         </Card>
