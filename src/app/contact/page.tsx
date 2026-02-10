@@ -21,12 +21,14 @@ export default function ContactPage() {
     setIsLoading(true);
 
     const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData.entries());
     
     try {
       const response = await fetch('https://formspree.io/f/movgwnzj', {
         method: 'POST',
-        body: formData,
+        body: JSON.stringify(data),
         headers: {
+          'Content-Type': 'application/json',
           'Accept': 'application/json'
         }
       });
