@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,24 +11,35 @@ import { Mail, MapPin, Phone, Loader2 } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
 const mapImage = PlaceHolderImages.find(p => p.id === 'contact-map');
 
+const formSchema = z.object({
+  name: z.string().min(2, { message: 'El nom ha de tenir almenys 2 caràcters.' }),
+  email: z.string().email({ message: 'El correu electrònic no és vàlid.' }),
+  message: z.string().min(10, { message: 'El missatge ha de tenir almenys 10 caràcters.' }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 export default function ContactPage() {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsLoading(true);
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      message: '',
+    },
+  });
 
-    const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData.entries());
-    
+  async function onSubmit(values: FormValues) {
     try {
       const response = await fetch('https://formspree.io/f/movgwnzj', {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify(values),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -39,7 +52,7 @@ export default function ContactPage() {
           description: 'Gràcies per contactar amb nosaltres. Et respondrem aviat.',
           variant: 'default',
         });
-        (event.target as HTMLFormElement).reset();
+        form.reset();
       } else {
         throw new Error('Error en l\'enviament del formulari.');
       }
@@ -50,8 +63,6 @@ export default function ContactPage() {
         title: 'Error en l\'enviament',
         description: 'No s\'ha pogut enviar el missatge. Si us plau, intenta-ho de nou més tard.',
       });
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -68,27 +79,41 @@ export default function ContactPage() {
         <Card>
           <CardContent className="p-8">
             <h2 className="text-2xl font-bold font-headline mb-6">Envia'ns un missatge</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">Nom complet</label>
-                <Input type="text" id="name" name="name" placeholder="El teu nom" required disabled={isLoading} />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">Correu electrònic</label>
-                <Input type="email" id="email" name="email" placeholder="el.teu@email.com" required disabled={isLoading} />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-foreground mb-1">Missatge</label>
-                <Textarea id="message" name="message" rows={5} placeholder="Com et podem ajudar?" required disabled={isLoading} />
-              </div>
-              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-                 {isLoading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  'Enviar Missatge'
-                )}
-              </Button>
-            </form>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                 <FormField control={form.control} name="name" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nom complet</FormLabel>
+                      <FormControl><Input placeholder="El teu nom" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="email" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Correu electrònic</FormLabel>
+                      <FormControl><Input placeholder="el.teu@email.com" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="message" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Missatge</FormLabel>
+                      <FormControl><Textarea placeholder="Com et podem ajudar?" rows={5} {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                
+                <Button type="submit" className="w-full" size="lg" disabled={form.formState.isSubmitting}>
+                   {form.formState.isSubmitting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    'Enviar Missatge'
+                  )}
+                </Button>
+              </form>
+            </Form>
           </CardContent>
         </Card>
         
