@@ -6,13 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, AlertCircle, List, Send, BookMarked, Info } from 'lucide-react';
+import { Loader2, AlertCircle, List, Send, BookMarked, Info, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -291,6 +291,14 @@ export default function BookingPage() {
                 <CardContent>
                   <p className="text-sm text-foreground/80">{sol.detalls}</p>
                 </CardContent>
+                {sol.estat?.toLowerCase() === 'aprovat' && (
+                  <CardFooter className="border-t px-6 py-4">
+                    <Button variant="secondary" size="sm" className="ml-auto">
+                      <Download className="mr-2 h-4 w-4" />
+                      Descarregar Albarà
+                    </Button>
+                  </CardFooter>
+                )}
               </Card>
             ))}
           </div>
