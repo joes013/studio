@@ -36,7 +36,7 @@ const formSchema = z.object({
   serviceType: z.string({ required_error: 'Has de seleccionar un tipus de servei.' }),
   origin: z.string().min(2, { message: "L'origen ha de tenir almenys 2 caràcters." }),
   destination: z.string().min(2, { message: 'El destí ha de tenir almenys 2 caràcters.' }),
-  charge: z.string().min(10, { message: 'La descripció de la càrrega és obligatòria.' }),
+  charge: z.string().min(1, { message: 'La descripció de la càrrega és obligatòria.' }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
