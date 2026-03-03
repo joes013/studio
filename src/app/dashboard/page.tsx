@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, LogOut, Truck, FileText } from 'lucide-react';
+import { Loader2, LogOut, Truck, FileText, BookMarked } from 'lucide-react';
 
 interface User {
     nom: string;
@@ -63,7 +63,24 @@ export default function DashboardPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <BookMarked /> Gestió de Comandes
+                        </CardTitle>
+                        <CardDescription>
+                            Crea noves sol·licituds de servei i consulta el teu històric.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                         <Button asChild className="w-full">
+                            <Link href="/booking">
+                                Anar a Comandes
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">

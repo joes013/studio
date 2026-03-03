@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LogIn, LogOut, Menu, Truck, User as UserIcon, FileText } from 'lucide-react';
+import { LogIn, LogOut, Menu, Truck, User as UserIcon, FileText, BookMarked } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -97,6 +97,12 @@ export function Header() {
               <Link href="/dashboard">
                 <UserIcon className="mr-2 h-4 w-4" />
                 <span>Gestió</span>
+              </Link>
+            </DropdownMenuItem>
+             <DropdownMenuItem asChild>
+              <Link href="/booking">
+                <BookMarked className="mr-2 h-4 w-4" />
+                <span>Comandes</span>
               </Link>
             </DropdownMenuItem>
              <DropdownMenuItem asChild>
@@ -202,6 +208,16 @@ export function Header() {
                       )}
                     >
                       Gestió
+                    </Link>
+                     <Link
+                      href="/booking"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        'text-lg font-semibold transition-colors hover:text-accent',
+                       pathname.startsWith('/booking') ? 'text-primary' : 'text-foreground'
+                      )}
+                    >
+                      Comandes
                     </Link>
                      <Link
                       href="/documents"
