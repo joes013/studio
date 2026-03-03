@@ -214,9 +214,8 @@ export default function BookingPage() {
                         <SelectTrigger><SelectValue placeholder="Selecciona un servei..." /></SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="Transport Marítim">Transport Marítim</SelectItem>
-                        <SelectItem value="Transport Aeri">Transport Aeri</SelectItem>
-                        <SelectItem value="Transport Terrestre">Transport Terrestre</SelectItem>
+                        <SelectItem value="Transport Terrestre (Líquids)">Transport Terrestre (Líquids)</SelectItem>
+                        <SelectItem value="Transport Terrestre (Palets)">Transport Terrestre (Palets)</SelectItem>
                         <SelectItem value="Magatzem">Magatzem</SelectItem>
                       </SelectContent>
                     </Select>
