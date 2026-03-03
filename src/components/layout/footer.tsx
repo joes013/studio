@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
 export function Footer() {
-  const [currentYear, setCurrentYear] = useState<number>();
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
 
   useEffect(() => {
     // This effect runs only on the client, ensuring no hydration mismatch.
@@ -56,7 +56,7 @@ export function Footer() {
 
         <div className="mt-12 border-t pt-8">
           <p className="text-center text-sm text-foreground/60">
-            © {currentYear} EJA Globaltrans. Tots els drets reservats.
+            © {currentYear || ''} EJA Globaltrans. Tots els drets reservats.
           </p>
         </div>
       </div>
