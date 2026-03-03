@@ -160,7 +160,7 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           <Button asChild className="hidden md:flex">
-            <Link href="/request-service">
+            <Link href="/booking">
               <Truck className="mr-2 h-4 w-4" /> Sol·licitar Servei
             </Link>
           </Button>
@@ -234,7 +234,7 @@ export function Header() {
                 </nav>
                  <div className="mt-auto flex flex-col gap-4">
                     <Button asChild onClick={() => setIsMobileMenuOpen(false)}>
-                        <Link href="/request-service">
+                        <Link href="/booking">
                         <Truck className="mr-2 h-4 w-4" /> Sol·licitar Servei
                         </Link>
                     </Button>

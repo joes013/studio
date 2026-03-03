@@ -170,7 +170,7 @@ export default function ServicesPage() {
               </CardContent>
               <CardFooter>
                 <Button asChild className="w-full" variant={tier.name === 'Transport Internacional' ? 'secondary' : 'default'}>
-                  <Link href="/request-service">{tier.cta}</Link>
+                  <Link href="/booking">{tier.cta}</Link>
                 </Button>
               </CardFooter>
             </Card>

@@ -67,7 +67,7 @@ export default function Home() {
             A EJA Globaltrans, connectem el teu negoci amb el món, oferint serveis de logística eficients, segurs i puntuals.
           </p>
           <Button asChild size="lg" className="mt-8 bg-accent text-accent-foreground hover:bg-accent/90">
-            <Link href="/request-service">
+            <Link href="/booking">
               Sol·licita un pressupost <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>
@@ -127,7 +127,7 @@ export default function Home() {
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Button asChild size="lg">
-              <Link href="/request-service">
+              <Link href="/booking">
                 Sol·licitar Servei
               </Link>
             </Button>

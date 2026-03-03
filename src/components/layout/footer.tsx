@@ -31,7 +31,7 @@ export function Footer() {
               <Link href="/services" className="text-sm text-foreground/80 hover:text-accent">Serveis</Link>
               <Link href="/blog" className="text-sm text-foreground/80 hover:text-accent">Blog</Link>
               <Link href="/dashboard" className="text-sm text-foreground/80 hover:text-accent">Gestió</Link>
-              <Link href="/request-service" className="text-sm text-foreground/80 hover:text-accent">Sol·licitar Servei</Link>
+              <Link href="/booking" className="text-sm text-foreground/80 hover:text-accent">Sol·licitar Servei</Link>
             </div>
           </div>
 
