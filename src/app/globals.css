@@ -65,4 +65,7 @@
   body {
     @apply bg-background text-foreground;
   }
+  .lead {
+    @apply text-xl text-muted-foreground;
+  }
 }
