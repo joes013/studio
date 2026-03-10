@@ -277,7 +277,7 @@ export default function DocumentsPage() {
                 </Button>
             </div>
 
-            <Card id="zona-factura" className="w-full max-w-[210mm] mx-auto p-8 shadow-lg border-none print:shadow-none print:border-none print:p-0">
+            <Card id="zona-factura" className="w-full max-w-[210mm] mx-auto p-8 shadow-lg">
                 <header className="flex justify-between items-start pb-8 border-b-2 border-primary">
                     <div>
                         <h2 className="font-headline text-3xl font-bold text-primary">EJA Globaltrans</h2>
