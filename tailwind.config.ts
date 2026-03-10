@@ -10,7 +10,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Courier New', 'monospace'],
+        body: ['Inter', 'sans-serif'],
         headline: ['Georgia', 'serif'],
         code: ['Courier New', 'monospace'],
       },
