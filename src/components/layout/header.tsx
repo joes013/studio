@@ -111,6 +111,12 @@ export function Header() {
                 <span>Documents</span>
               </Link>
             </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/tracking">
+                <Truck className="mr-2 h-4 w-4" />
+                <span>Seguiment</span>
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
@@ -228,6 +234,16 @@ export function Header() {
                       )}
                     >
                       Documents
+                    </Link>
+                    <Link
+                      href="/tracking"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        'text-lg font-semibold transition-colors hover:text-accent',
+                       pathname.startsWith('/tracking') ? 'text-primary' : 'text-foreground'
+                      )}
+                    >
+                      Seguiment
                     </Link>
                     </>
                   )}
