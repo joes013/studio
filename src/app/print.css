@@ -1,50 +1,50 @@
 @media print {
-  /* Hide everything by default */
+  /* Hide everything in the body by default */
   body * {
     visibility: hidden;
   }
 
-  /* Make the printable area and its children visible */
+  /* Make the printable area and all its children visible */
   #zona-factura, #zona-factura * {
     visibility: visible;
   }
 
-  /* Position the printable area to fill the page */
+  /* Position the printable area to be the only thing on the page */
   #zona-factura {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     margin: 0;
-    padding: 2rem; /* Add some padding for print layout */
+    padding: 0;
     border: none !important;
     box-shadow: none !important;
-    color: #000 !important; /* Set default text color to black */
-    background-color: #fff !important; /* Set background to white */
+  }
+  
+  /* Ensure the body background is white for printing */
+  body {
+    background-color: #fff !important;
   }
 
-  /* Force all children of the invoice to have black text */
+  /* Force all elements inside the invoice to have black text and a transparent background */
   #zona-factura * {
     color: #000 !important;
     background-color: transparent !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  
-  /* You may need to be more specific for some elements */
-  #zona-factura .text-primary {
+
+  /* Be specific about text colors that might be set by utility classes */
+  #zona-factura .text-primary, 
+  #zona-factura .text-accent {
     color: #000 !important;
   }
   #zona-factura .text-muted-foreground {
     color: #555 !important;
   }
-  
-  /* Make sure table headers are styled correctly for print */
-  #zona-factura th {
-    color: #000 !important;
-    background-color: #f2f2f2 !important; /* A light grey for header background */
-  }
 
-  /* Remove background colors from table rows if any */
-  #zona-factura tr, #zona-factura thead {
-    background-color: transparent !important;
+  /* Make table headers stand out with a light grey background */
+  #zona-factura thead tr {
+    background-color: #f2f2f2 !important;
   }
 }

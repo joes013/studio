@@ -14,7 +14,7 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="bg-primary/5 border-t">
+    <footer className="bg-primary/5 border-t print:hidden">
       <div className="container mx-auto max-w-7xl px-6 py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="md:col-span-2">
